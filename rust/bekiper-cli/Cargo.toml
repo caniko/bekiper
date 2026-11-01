@@ -1,0 +1,48 @@
+[package]
+name = "bekiper-cli"
+description = "Command-line interface for Bekiper kinematic analysis"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[features]
+default = ["full"]
+full = ["bekiper-ingress/full", "bekiper-pose/full"]
+
+[[bin]]
+name = "bekiper"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+bekiper-annotation.workspace = true
+bekiper-core.workspace = true
+bekiper-feature.workspace = true
+bekiper-ingress = { workspace = true, default-features = false }
+bekiper-pose = { workspace = true, default-features = false }
+bekiper-post-analysis.workspace = true
+clap.workspace = true
+polars.workspace = true
+serde_json.workspace = true
+sha2 = "0.10"
+toml.workspace = true
+themekit.workspace = true
+zip.workspace = true
+tokio = { workspace = true, optional = true }
+tracing.workspace = true
+tracing-subscriber.workspace = true
+url = { version = "2", optional = true }
+
+[target.'cfg(unix)'.dependencies]
+signal-hook = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+png = "0.18"
+
+# Annotation features exist only in the private build.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+  'cfg(feature, values("gui", "annotate-client", "annotate-server"))',
+] }

@@ -1,0 +1,29 @@
+[project]
+name = "bekiper-inspect"
+version = "0.1.0"
+license = { text = "AGPL-3.0-only" }
+description = "Matplotlib-based inspection and visualization for bekiper analysis output"
+authors = [{ name = "Can H. Tartanoglu", email = "canhtart@gmail.com" }]
+requires-python = ">=3.12"
+
+dependencies = [
+  "bekiper-rs",
+  "numpy>=1.26",
+  "polars>=1.0",
+  "matplotlib>=3.8",
+  "seaborn",
+  "opencv-python>=4.9",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

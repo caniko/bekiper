@@ -1,0 +1,23 @@
+{
+  "disabled": {
+    "arm_sequence": [
+      "A",
+      "A"
+    ],
+    "pose_gap_fill_seconds": 0.0,
+    "raw_arm_sequence": [
+      "A",
+      "A"
+    ]
+  },
+  "filled": {
+    "arm_sequence": [
+      "A"
+    ],
+    "pose_gap_fill_seconds": 0.2,
+    "raw_arm_sequence": [
+      "A",
+      "A"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+# Legacy source:
+# /data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/phase/Imen/NORT/result/nort.xlsx
+source_workbook = "/data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/phase/Imen/NORT/result/nort.xlsx"
+source_sheet = "TestNovelty"
+source_row = "A1_93"
+expected_sheet = "TestNovelty"
+
+experiment = "A1_seq93_nortnovelty"
+fps = 15.0
+meters_per_pixel = 0.001
+task_type = "object_recognition"
+
+[aggregate.recipe_to_sheet]
+nortnovelty = "TestNovelty"
+
+[animal_metadata]
+animal = "A1"
+
+[detailed]
+protocol = "nort_novelty"
+excluded = false
+object_labels = ["arena", "familiar", "novel"]
+exploration_times = [0.0, 13.41162340695269, 68.4593314205645]
+bout_counts = [0, 0, 0]
+
+[detailed.indices]
+pct_novel = 83.61858190709046
+novel_seconds = 68.4593314205645
+familiar_seconds = 13.41162340695269
+total_seconds = 81.87095482751718
+
+[expected_cells]
+protocol = "nort_novelty"
+pct_novel = 83.61858190709046
+novel_s = 68.4593314205645
+familiar_s = 13.41162340695269
+total_exploration_s = 81.87095482751718
+familiar_exploration_s = 13.41162340695269
+novel_exploration_s = 68.4593314205645

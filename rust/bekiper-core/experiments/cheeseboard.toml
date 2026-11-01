@@ -1,0 +1,79 @@
+# Cheeseboard reward search: the path from the start area to the baited well.
+# Endpoints follow the aggregate workbook's animal overview columns.
+id = "cheeseboard"
+key = "cheeseboard"
+task_type = "cheeseboard"
+aliases = ["reward_tracing"]
+display_name = "Cheeseboard reward search"
+short_name = "Cheeseboard"
+archetype = "goal_search"
+order = 40
+
+[[sections]]
+id = "cheeseboard"
+title = "Cheeseboard"
+order = 20
+
+[[steps]]
+id = "search"
+label = "Reward search"
+section = "cheeseboard"
+order = 50
+
+[objects]
+roles = ["reward", "start"]
+
+[[endpoints]]
+name = "seconds_to_find_reward"
+label = "latency to reward (s)"
+criteria = true
+
+[[endpoints]]
+name = "reward_entries"
+label = "reward entries"
+criteria = true
+
+[[endpoints]]
+name = "search_path_distance_meters"
+label = "search path to reward (m)"
+criteria = true
+
+[[endpoints]]
+name = "search_tortuosity"
+label = "search path tortuosity"
+
+[[endpoints]]
+name = "total_distance_meters"
+label = "total distance (m)"
+
+[[endpoints]]
+name = "total_duration_seconds"
+label = "session duration (s)"
+
+[[blocks]]
+id = "context_card"
+
+[[blocks]]
+id = "protocol_timeline"
+
+[[blocks]]
+id = "endpoint_table"
+requires = ["metrics"]
+
+[[blocks]]
+id = "figure_gallery"
+
+[[blocks]]
+id = "animal_step_grid"
+
+[[blocks]]
+id = "video_embed"
+requires = ["video"]
+
+[[blocks]]
+id = "object_role_legend"
+requires = ["objects"]
+
+[[blocks]]
+id = "qc_flags"
+requires = ["metrics"]

@@ -1,0 +1,14 @@
+[package]
+name = "bekiper-feature"
+description = "Heuristic algorithms and feature extraction for bekiper"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bekiper-core.workspace = true
+bekiper-math.workspace = true
+bekiper-perimeter.workspace = true
+polars.workspace = true
+serde.workspace = true

@@ -1,0 +1,17 @@
+[package]
+name = "bekiper-detect"
+description = "Classical CV object detection pipeline for bekiper arenas"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bekiper-annotate-protocol.workspace = true
+bekiper-core.workspace = true
+bekiper-feature.workspace = true
+image.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true

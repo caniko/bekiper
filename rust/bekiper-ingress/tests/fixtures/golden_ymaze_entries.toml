@@ -1,0 +1,79 @@
+[[trial]]
+animal_trial_id = "A700_T0"
+raw_arm_A_entries = 1
+raw_arm_B_entries = 1
+raw_arm_C_entries = 0
+raw_total_arm_entries = 2
+removed_short_entries = 2
+raw_arm_entry_sequence = "A B"
+valid_arm_A_entries = 0
+valid_arm_B_entries = 0
+valid_arm_C_entries = 0
+valid_total_arm_entries = 0
+total_triads = 0
+usable_triads = 0
+low_valid_entries_flag = true
+low_usable_triads_flag = true
+
+[[trial]]
+animal_trial_id = "A701_T1"
+raw_arm_A_entries = 1
+raw_arm_B_entries = 1
+raw_arm_C_entries = 1
+raw_total_arm_entries = 3
+removed_short_entries = 0
+raw_arm_entry_sequence = "A B C"
+valid_arm_A_entries = 1
+valid_arm_B_entries = 1
+valid_arm_C_entries = 1
+valid_total_arm_entries = 3
+valid_arm_entry_sequence = "A B C"
+spontaneous_alternation_pct = 100.0
+spontaneous_alternation_pct_standard = 100.0
+total_triads = 1
+usable_triads = 1
+neutral_triads_pct = 0.0
+low_valid_entries_flag = true
+low_usable_triads_flag = true
+
+[[trial]]
+animal_trial_id = "A702_T2"
+raw_arm_A_entries = 3
+raw_arm_B_entries = 2
+raw_arm_C_entries = 1
+raw_total_arm_entries = 6
+removed_short_entries = 1
+raw_arm_entry_sequence = "A A B A C B"
+valid_arm_A_entries = 2
+valid_arm_B_entries = 2
+valid_arm_C_entries = 1
+valid_total_arm_entries = 5
+valid_arm_entry_sequence = "A B A C B"
+spontaneous_alternation_pct = 66.67
+spontaneous_alternation_pct_standard = 66.66666666666667
+total_triads = 3
+usable_triads = 3
+neutral_triads_pct = 0.0
+low_valid_entries_flag = true
+low_usable_triads_flag = true
+
+[[trial]]
+animal_trial_id = "A703_T3"
+raw_arm_A_entries = 5
+raw_arm_B_entries = 3
+raw_arm_C_entries = 4
+raw_total_arm_entries = 12
+removed_short_entries = 2
+raw_arm_entry_sequence = "A B C A A B C C A B C A"
+valid_arm_A_entries = 4
+valid_arm_B_entries = 3
+valid_arm_C_entries = 3
+valid_total_arm_entries = 10
+valid_arm_entry_sequence = "A B C A B C A B C A"
+spontaneous_alternation_pct = 100.0
+spontaneous_alternation_pct_standard = 100.0
+total_triads = 8
+usable_triads = 8
+neutral_triads_pct = 0.0
+low_valid_entries_flag = false
+low_usable_triads_flag = false

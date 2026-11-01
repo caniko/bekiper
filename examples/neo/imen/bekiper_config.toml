@@ -1,0 +1,522 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  Bekiper Project Configuration                                   ║
+# ║                                                                  ║
+# ║  All commented-out settings show their default values.           ║
+# ║  Uncomment and change only what you need.                        ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+# ── Inspection plot profiles ────────────────────────────────────────
+# Per-figure rendering profiles. Each profile is a bundle of
+# `[inspect.plot]` field overrides; routing rules map a feature's
+# (kind, label) to a profile name.
+#
+# CLI overrides (highest precedence): pass `--profile`, `--render-mode`,
+# `--density-scale`, `--min-speed`, `--velocity-field`, `--small-multiples`
+# to `bekiper inspect plot`. Values resolve through CLI/constructor overrides,
+# BEKIPER_PLOT_* environment variables, this TOML, then built-in defaults.
+# Normal runs capture the resolved settings; replay ignores later environment
+# changes so the retained presentation can be reproduced.
+#
+# Built-in profiles (always available):
+#   - line              : single-line trajectory (legacy default)
+#   - density           : 2D occupancy heatmap, no line
+#   - dense_trajectory  : heatmap + translucent line layered (best for
+#                         tightly cropped panels — Y-maze arms etc.)
+#   - temporal          : time-coloured trajectory (path order matters)
+#   - print_friendly    : larger fonts, thicker lines for slides/print
+#   - active_only       : skip stationary frames (≥ 2 cm/s) — removes
+#                         the "sitting still" scribble
+#   - density_log       : log-scaled occupancy heatmap so brief visits
+#                         stay visible against long dwell zones
+#   - velocity_field    : faint heatmap + mean-velocity quiver per bin
+#                         (reveals habitual movement direction)
+#   - state_colored     : colour line by behavioural-state columns
+#                         (provide ``state_color_columns`` override)
+#   - small_multiples_3 : split a long Y-maze arm-sections session into
+#                         3 side-by-side temporal panels
+#   - small_multiples_4 : same with 4 panels
+#
+# Add or override a built-in by re-declaring the table:
+# [inspect.plot.profiles.dense_trajectory]
+# density_alpha = 0.55
+#
+# Define a brand-new profile the same way:
+# [inspect.plot.profiles.my_profile]
+# trajectory_render_mode = "both"
+# linewidth = 2.5
+#
+# Routing rules (first match wins). Either ``kind`` or ``label`` (or
+# both) can be omitted to match anything; both are fnmatch patterns.
+
+[inspect.plot]
+fig_format = ".png"
+min_dpi = 300
+trajectory_gradient = true
+
+# Y-maze arm-section panels are tightly cropped — the long-session line
+# tangle is unreadable, so render an occupancy density behind it.
+[[inspect.plot.figure_profiles]]
+kind = "ymaze_arm_sections"
+profile = "dense_trajectory"
+
+# OFT center/periphery already paints a heatmap inside the renderer;
+# this rule makes it slightly more opaque so the zone read is louder.
+[[inspect.plot.figure_profiles]]
+kind = "center_periphery"
+profile = "density"
+
+# NORT object-decomposition stories benefit from temporal colouring so
+# the path order around each object reads at a glance.
+[[inspect.plot.figure_profiles]]
+kind = "story"
+label = "object_decomposition_*"
+profile = "temporal"
+
+# Y-maze arm-occupancy stories are dense too — same treatment.
+[[inspect.plot.figure_profiles]]
+kind = "story"
+label = "in_*arm_*"
+profile = "dense_trajectory"
+
+# Example: configure state_colored with the columns this dataset has.
+# Uncomment + tweak the column names to enable.
+# [inspect.plot.profiles.state_colored]
+# state_color_columns = { freezing = "deepskyblue", grooming = "magenta", rearing = "orange" }
+# [[inspect.plot.figure_profiles]]
+# kind = "ymaze_arm_sections"
+# profile = "state_colored"
+
+# ── Project ─────────────────────────────────────────────────────────
+[project]
+project_name = "imen_pilot"
+data_directory = "."        # root for relative video paths
+output_dir = "output"       # where results are written
+
+# Runtime settings (optional).
+# [project.runtime]
+# minimum_seconds_tolerance = 0.5      # min bout duration to count (s)
+# maximum_seconds_distraction = 0.333  # max gap to bridge between bouts (s)
+# num_threads = 4                      # Rayon thread count (omit = all cores)
+# memory_scheduler_enabled = true      # throttle new parallel work under RAM pressure
+# max_ram_usage_fraction = 0.80        # whole-machine RAM fraction cap for new work
+
+# ── Cohort post-analysis export ─────────────────────────────────────
+# Without plan_path, publish descriptive recorded cohorts for every session,
+# phase and threshold. An explicitly supplied registered plan must be readable
+# and valid before pipeline work. The cohort step writes auditable
+# outputs under data/_post_analysis/<run_id>/ for inclusion in data.tar.zst.
+[post_analysis]
+enabled = true
+# Source decoding/augmentation is shared across variants. Context workers are
+# separately bounded and their rendering workspace is reserved before execution.
+primary_workers = 4
+# Total figure-render processes of the publication; split across the contexts.
+render_workers = 8
+# Omit run_id so each fresh run receives a unique cohort publication identity.
+
+[[post_analysis.contexts]]
+assay = "ymaze"
+variant = "arm0_dwell1s"
+
+[[post_analysis.contexts]]
+assay = "ymaze"
+variant = "arm25"
+
+[[post_analysis.contexts]]
+assay = "ymaze"
+variant = "arm45"
+
+[[post_analysis.contexts]]
+assay = "ymaze"
+variant = "arm65"
+
+[[post_analysis.contexts]]
+assay = "nort"
+variant = "whisker20mm"
+
+[[post_analysis.contexts]]
+assay = "nort"
+variant = "whisker30mm"
+
+[[post_analysis.contexts]]
+assay = "nort"
+variant = "nose_only"
+
+[post_analysis.figures]
+enabled = true
+# Omitted selection retains all approved main, sensitivity, distribution,
+# diagnostic and subgroup families, including explicitly unavailable attempts.
+formats = ["png", "pdf", "svg"]
+dpi = 300
+
+[post_analysis.report]
+enabled = true
+title = "Imen behavioural post-analysis"
+compiler = "latexmk"
+
+# ── Pipeline ────────────────────────────────────────────────────────
+[pipeline]
+pose_label_model = "imen_dlc" # trained DLC labels: nose, ears, tail/base_tail
+likelihood_threshold = 0.9    # min pose confidence to keep a keypoint
+smoothing_window = 5          # median filter window (frames)
+max_velocity = 50.0           # outlier rejection: max px/frame
+
+[[pipeline.midpoint_groups]]
+output_label = "center_ear"
+source_labels = ["left_ear", "right_ear"]
+
+# Body centroid (mid nose↔tail) — used for OFT/NORT zone-entry tracking,
+# matching the criteria doc which calls for "body centroid" rather than head.
+[[pipeline.midpoint_groups]]
+output_label = "body_center"
+source_labels = ["nose", "tail"]
+
+# The trained Imen DLC model has a hardcoded four-point skeleton preset. The
+# augment stage applies that model-owned topology after deriving `center_ear`.
+
+# ── Pose data ───────────────────────────────────────────────────────
+# neo/imen uses trained DeepLabCut H5 outputs mirrored under
+# deeplabcut/poses/<video path>.h5. Do not fall back to the generic
+# SuperAnimal ONNX model for this dataset.
+
+# ── Shared task defaults ────────────────────────────────────────────
+# Apply to every scan. Override per-scan under [scan.task_params].
+#
+# freezing_speed_threshold = 0.02      # speed below which animal is frozen (m/s)
+# min_dwell_seconds       = 1.0        # min time in a zone to count as entry (s)
+# peripheral_band_fraction = 0.2       # peripheral zone width / arena side
+#
+# Body-part columns (DLC SuperAnimal defaults):
+# centroid_coords = { x = "mouse_center_x", y = "mouse_center_y" }
+# nose_coords     = { x = "nose_x",         y = "nose_y" }
+# head_coords     = { x = "center_ear_x",   y = "center_ear_y" }
+# tail_coords     = { x = "tail_base_x",    y = "tail_base_y" }
+
+# ════════════════════════════════════════════════════════════════════
+#  INGRESS PROFILE — videomap owns video discovery + annotation metadata
+# ════════════════════════════════════════════════════════════════════
+
+[[ingress_profile]]
+profile = "videomap"
+
+# ── NORT (Novel Object Recognition Test) ───────────────────────────
+# T1 = familiarisation (identical objects)
+# T2 = test (novel vs familiar)
+[[ingress_profile.tasks]]
+video_dir = "NORT videos"
+pose_data_dir = "deeplabcut/poses"
+task_type = "object_recognition"
+meters_per_pixel = { method = "arena_side", meters = 0.40 }
+backend = ["manual_annotation", "classical_cv", "sam2_auto"]
+annotations = { dir = "annotations/nort" }
+
+# Arena measurements use "arena" and "center_zone". Owner decision 2026-10-21:
+# each video's box (dark walls framing the floor) is detected as the 40 x 40 cm
+# arena; its width and height set that video's horizontal and vertical scale and
+# the center sits on its center. Owner decision 2026-10-28: 24 x 24 cm center and
+# 8 cm band per wall, as in OFT. Without a detected box, both are centered on that video's own
+# frame with the shared diagonal calibration (scale method "+frame_center_fallback").
+# No outline needs drawing or review; a reviewed arena/center_zone pair wins.
+
+[ingress_profile.tasks.arena_calibration]
+# NORT walls sit at the frame border; search edges right up to it.
+search_margin_fraction = 0.0
+center_zone_rule = { method = "frame_centered", arena_width_meters = 0.40, arena_height_meters = 0.40, center_width_meters = 0.24, center_height_meters = 0.24, detect_box = true }
+
+[ingress_profile.tasks.recipe_rules]
+"**/T1/**" = "nort_training"
+"**/T2/**" = "nort_novelty"
+
+[ingress_profile.tasks.task_params]
+centroid_coords = { x = "body_center_x", y = "body_center_y" }
+nose_coords = { x = "nose_x", y = "nose_y" }
+head_coords = { x = "center_ear_x", y = "center_ear_y" }
+tail_coords = { x = "tail_x", y = "tail_y" }
+
+# Researcher amendment 2026-10-13 supersedes the recipe's NORT bout/gap/speed rules.
+# Old sealed results retain their configured policies and event lineage.
+[ingress_profile.tasks.task_params.exploration]
+nose_max_distance = 0.03              # 3 cm convex-hull annulus
+contact_distance = 0.005              # below this, skip angle check
+speed_filter_mode = "disabled"        # speed is descriptive, never an exclusion filter
+strict_boundaries = false             # inclusive gap endpoint
+angle_filter_mode = "per_bout_median"
+max_angle_deg = 45.0                  # per-frame trigger and bout-median check (°)
+max_nose_speed = 0.05                 # diagnostic reference only; filtering is disabled
+min_bout_seconds = 0.25               # inclusive ≥0.25 s after merging (owner 2026-10-28)
+max_gap_seconds = 1.0                 # inclusive ≤1.0 s gap merging
+min_total_exploration = 15.0          # reporting threshold only; does not auto-exclude
+# Imen 2026-05-19: report first_object_approach_time_s but compute
+# exploration over the full trial.
+window_mode = "full_analysis"
+# analysis_window_seconds is now unused for Imen; keep set for documentation.
+analysis_window_seconds = 120.0 # historical 2 min from first approach
+perimeter_erosion_meters = 0.01 # 1 cm mask erosion (perimeter artifacts)
+# Owner decision 2026-10-22: grooming (≥1 s) / rearing (≥0.5 s) proxy frames near an
+# object count only when the head is oriented to it; nose contact alone does not rescue them.
+exclude_posture = true
+
+# Owner decision 2026-10-28: object observation = nose rule OR a whisker-fan hit.
+# Apex 90% of the way from the head midline (inter-ear midpoint, center_ear) to the
+# nose tip (owner 2026-10-28), on the whisker pad; one fan per side spans ±30°
+# around the perpendicular to the head axis. Length by age (pre recordings: start age; post:
+# end age). The flat 11.7 mm table records that no adult age effect is documented
+# (Bresee et al. 2023, J Exp Biol 226:jeb245597, array-centre arclength).
+# Reach sensitivity (20/30 mm) and the nose-only comparator are NORT variants of
+# the same run (see the NORT task's variants), each with its own post-analysis context.
+[ingress_profile.tasks.task_params.exploration.whisker]
+enabled = true
+apex_fraction = 0.9
+half_angle_deg = 30.0
+
+[ingress_profile.tasks.task_params.exploration.whisker.length]
+method = "age_table"
+source = "mice_overview.xlsx"
+sheet = "Updated_Mice-overview"
+animal_column = "Animal ID"
+pre_age_column = "Start age (days)"
+post_age_column = "End age (days)"
+table = [
+  [
+    0,
+    0.0117,
+  ],
+  [
+    400,
+    0.0117,
+  ],
+] # [age_days, metres]; flat (no adult age effect)
+
+
+# Whisker reach sensitivity and nose-only comparator as variants of one run.
+[[ingress_profile.tasks.variants]]
+name = "whisker_age"
+
+[[ingress_profile.tasks.variants]]
+name = "whisker20mm"
+[ingress_profile.tasks.variants.exploration.whisker]
+length = { meters = 0.020 }
+
+[[ingress_profile.tasks.variants]]
+name = "whisker30mm"
+[ingress_profile.tasks.variants.exploration.whisker]
+length = { meters = 0.030 }
+
+[[ingress_profile.tasks.variants]]
+name = "nose_only"
+[ingress_profile.tasks.variants.exploration.whisker]
+enabled = false
+
+# ── OFT (Open Field Test) ──────────────────────────────────────────
+[[ingress_profile.tasks]]
+video_dir = "OFT videos"
+pose_data_dir = "deeplabcut/poses"
+task_type = "open_field"
+# Square 40 cm floor: the detected box's width and height each set their own
+# axis scale, so non-square pixels stay physically correct (24 cm center, 8 cm band).
+meters_per_pixel = { method = "arena_side", meters = 0.40, square = true }
+recipe = "oft"
+backend = "arena_calibration_cv"
+# Stage 0 recording metadata is shared with NORT. Bind (Animal, 0, PhasePart)
+# to retain original TrialNumber; geometry still comes from OFT calibration.
+annotations = { dir = "annotations/nort" }
+
+[ingress_profile.tasks.arena_calibration]
+sample_positions = [0.10, 0.50, 0.90]
+search_margin_fraction = 0.00
+smoothing_fraction = 0.01
+min_side_fraction = 0.45
+max_aspect_error = 0.20
+max_center_shift_fraction = 0.03
+max_side_shift_fraction = 0.05
+min_edge_score = 1.20
+# Centered on this recording's arena floor, rather than on the camera frame.
+# 0.6 of each 40 cm floor dimension gives the required 24 × 24 cm center,
+# leaving an 8 cm peripheral band along each wall.
+center_zone_rule = { method = "video_relative", width_fraction = 0.6, height_fraction = 0.6 }
+
+[ingress_profile.tasks.task_params]
+oft_window_seconds = 300.0
+# Continuous centroid membership; shorter zone visits are not valid entries.
+min_dwell_seconds = 1.0
+# 8 cm band (24 cm center) when no center_zone outline is generated or reviewed.
+peripheral_band_fraction = 0.2
+centroid_coords = { x = "body_center_x", y = "body_center_y" }
+nose_coords = { x = "nose_x", y = "nose_y" }
+head_coords = { x = "center_ear_x", y = "center_ear_y" }
+tail_coords = { x = "tail_x", y = "tail_y" }
+
+# Rearing — body compacts vertically, animal stationary, ≥0.5 s.
+# Values pinned to the lit-grounded Rust defaults (Sturman et al. 2020,
+# Geuther et al. 2021): rearing in C57BL/6 reliably appears as
+# centroid speed < 2 cm/s, planar body projection compressed to ≤70 %
+# of the resting baseline (and ≤5 cm absolute for adult mice).
+# `forepaw_proximity` is intentionally omitted — the Imen DLC model has
+# no paw keypoints, so the optional forepaw rule is disabled.
+[ingress_profile.tasks.task_params.rearing]
+max_speed = 0.01            # max centroid speed (m/s)
+max_body_length_ratio = 0.7 # max nose-to-tail / baseline
+max_body_length = 0.05      # absolute max nose-to-tail (m)
+
+# Grooming — very slow, curled posture, ≥1.0 s.
+# Values pinned to lit-grounded Rust defaults (Geuther et al. 2021,
+# van den Boom et al. 2017 grooming microstructure): centroid speed
+# < 0.5 cm/s with planar body projection in a 4–8 cm window. As above,
+# `forepaw_proximity` is omitted because no forepaw keypoints are
+# available in the Imen DLC model.
+[ingress_profile.tasks.task_params.grooming]
+max_speed = 0.005      # max centroid speed (m/s)
+max_body_length = 0.08 # max nose-to-tail (m)
+min_body_length = 0.04 # min nose-to-tail (m)
+
+# ── Y-maze ──────────────────────────────────────────────────────────
+[[ingress_profile.tasks]]
+video_dir = "Y-maze videos"
+pose_data_dir = "deeplabcut/poses"
+task_type = "y_maze"
+meters_per_pixel = { method = "arm_length", meters = 0.35 }
+recipe = "ymaze"
+backend = ["manual_annotation"]
+annotations = { dir = "annotations/ymaze" }
+
+[ingress_profile.tasks.task_params]
+centroid_coords = { x = "center_ear_x", y = "center_ear_y" }
+nose_coords = { x = "nose_x", y = "nose_y" }
+head_coords = { x = "center_ear_x", y = "center_ear_y" }
+tail_coords = { x = "base_tail_x", y = "base_tail_y" }
+
+[ingress_profile.tasks.task_params.ymaze]
+# Owner decision 2026-10-28: arm-start displacement replaces the retired
+# imen_radial_vertex_span_v1 geometry for new runs. Each arm runs from its
+# centre-triangle edge (c1, c2; 0%) to the annotated distal line (d1, d2; 100%).
+# The p% line joins c1 + p(d1 - c1) and c2 + p(d2 - c2); both landmarks must be
+# inside the arm polygon and on the distal side of that line (inclusive).
+threshold_geometry = "imen_arm_start_crossline_v1"
+# Trim leading no-animal frames; matches our project's interpretation of
+# the criteria doc (override: see "Y-maze analysis criteria" note).
+start_mode = "first_detection"
+# 2026-10-28: no dwell for 25/45/65%; only arm0_dwell1s keeps the 1 s dwell.
+apply_dwell_filter = false
+# 2026-10-28: bridge arm-membership interruptions of ≤1 s.
+zone_max_gap_seconds = 1.0
+# Either landmark's retreat releases the predicate.
+arm_membership_hysteresis = false
+# No fabricated crossing from forward-filled pose.
+pose_gap_fill_seconds = 0.0
+# Archived radial runs keep their recorded geometry, policies and identities
+# (proximal25/45/65, compare_0pct_dwell0s, compare_0pct_dwell1s).
+
+[ingress_profile.tasks.task_params.ymaze.temporal_policy]
+min_duration_seconds = 0.0
+duration_comparison = "at_least"
+max_gap_seconds = 0.0
+
+# Four equal, independent primary contexts (owner decision 2026-10-28).
+# Shared settings above are inherited by each variant.
+[[ingress_profile.tasks.variants]]
+name = "arm0_dwell1s"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.0
+apply_dwell_filter = true
+# ≥1 s same-arm membership; interruptions of ≤1 s do not break the dwell.
+[ingress_profile.tasks.variants.ymaze.temporal_policy]
+min_duration_seconds = 1.0
+duration_comparison = "at_least"
+max_gap_seconds = 1.0
+
+[[ingress_profile.tasks.variants]]
+name = "arm25"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.25
+
+[[ingress_profile.tasks.variants]]
+name = "arm45"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.45
+
+[[ingress_profile.tasks.variants]]
+name = "arm65"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.65
+
+# ── Consolidated cross-trial export ───────────────────────────────
+[aggregate]
+output_filename = "imen_results.ods"
+
+[aggregate.metadata]
+path = "animal_metadata.xlsx"
+sheet = "Updated_Mice-overview"
+# Missing biology remains in the ledger for recovery; it is not a scientific exclusion.
+missing_policy = "allow_blanks"
+
+[aggregate.recipe_to_sheet]
+nort_habituation = "nort_habituation"
+nort_training = "nort_training"
+nort_novelty = "nort_novelty"
+open_field = "oft"
+y_maze = "ymaze"
+ymaze = "ymaze"
+ymaze__proximal25 = "ymaze_proximal25"
+ymaze__proximal45 = "ymaze_proximal45"
+ymaze__proximal65 = "ymaze_proximal65"
+ymaze__compare_0pct_dwell0s = "ymaze_compare_0pct_dwell0s"
+ymaze__arm0_dwell1s = "ymaze_arm0_dwell1s"
+ymaze__arm25 = "ymaze_arm25"
+ymaze__arm45 = "ymaze_arm45"
+ymaze__arm65 = "ymaze_arm65"
+
+# ── Remote annotation access control (Rauthy / OIDC) ────────────────
+# `bekiper annotate serve` authenticates remote clients with a Rauthy OIDC
+# access token (JWT) and authorizes on the `bekiper` group plus the
+# allowed_users list below. The server validates tokens itself against Rauthy's
+# JWKS — Caddy/Cloudflare do NOT front the QUIC data path. Remove this whole
+# table for token-only auth.
+[auth]
+issuer = "https://id.tartanoglu.com/auth/v1"
+audience = "bekiper-annotate"                # OIDC client id registered in Rauthy
+required_groups = ["bekiper"]                # caller must hold this Rauthy group
+# Restrict THIS project to specific annotators (matched on Rauthy sub or email).
+# Empty = any member of the `bekiper` group. Fill in the annotators' emails:
+allowed_users = [] # e.g. ["imen@tartanoglu.com"]
+# Rauthy/OIDC is the exclusive auth source — the legacy bka_ static token is
+# disabled, so the server needs no token file/secret.
+allow_static_token = false
+
+# Reviewer package (`bekiper review package`): criteria endpoints from
+# criteria.md, shown first on the assay pages and in each trial composite's
+# header. Order matters: the first endpoint with values in a session stratum
+# also picks the min/median/max preview sample. `requirements` is the markdown
+# whose dated headings form the Parameters page decision log.
+[review]
+title = "Neo/Imen reviewer package"
+requirements = "behavioral_analysis_requirements.md"
+extensions = "research_extensions.md"
+[review.primary_endpoints]
+oft = [
+  "center_time_pct",
+  "center_duration_s",
+  "center_entries",
+  "latency_to_center_s",
+  "periphery_time_pct",
+  "total_distance_m",
+  "total_mean_speed",
+]
+nort = [
+  "DI",
+  "pct_novel",
+  "object_bias",
+  "total_exploration_s",
+  "novel_exploration_s",
+  "familiar_exploration_s",
+  "object_A_exploration_s",
+  "object_B_exploration_s",
+  "first_object_approach_time_s",
+]
+ymaze = [
+  "spontaneous_alternation_pct",
+  "spontaneous_alternation_pct_standard",
+  "neutral_triads_pct",
+  "valid_total_arm_entries",
+  "total_distance_m",
+  "total_mean_speed",
+]

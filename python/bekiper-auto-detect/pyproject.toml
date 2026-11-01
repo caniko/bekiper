@@ -1,0 +1,31 @@
+[project]
+name = "bekiper-auto-detect"
+version = "0.1.0"
+license = { text = "AGPL-3.0-only" }
+description = "AI-powered object detection for behavioral neuroscience arenas"
+authors = [{ name = "Can H. Tartanoglu", email = "canhtart@gmail.com" }]
+requires-python = ">=3.12"
+
+dependencies = [
+  "numpy>=2.4",
+  "opencv-python>=4.9",
+  "Pillow",
+  "pydantic>=2.0",
+  "tomli-w",
+  "torch>=2.5.1",
+  "transformers>=5.3",
+  "ultralytics>=8.3",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

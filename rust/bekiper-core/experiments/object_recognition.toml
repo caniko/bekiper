@@ -1,0 +1,182 @@
+# Novel object recognition (NORT: T1 training, T2 test) and objects in updating
+# locations (OUL: training, update, test). Steps match in file order: OUL by its
+# recipe first, then NORT by the recorded phase, else the session stage.
+id = "object_recognition"
+key = "nort"
+task_type = "object_recognition"
+aliases = [
+  "novel_object_recognition",
+  "objects_in_updating_locations",
+  "nort",
+  "oul",
+]
+display_name = "Novel object recognition"
+short_name = "NORT"
+archetype = "object_exploration"
+order = 20
+# A composite draws three object channels per frame.
+render_cost = 3
+figures = ["whisker_contribution", "whisker_reach", "nort_time_course"]
+
+[[sections]]
+id = "nort_protocol"
+title = "NORT protocol"
+order = 0
+by_timepoint = true
+
+[[sections]]
+id = "oul_protocol"
+title = "OUL protocol"
+order = 0
+by_timepoint = true
+
+[[steps]]
+id = "oul_training"
+label = "Training"
+section = "oul_protocol"
+order = 20
+video = "qualia"
+match = [{ recipe = "oul_training" }]
+
+[[steps]]
+id = "oul_update"
+label = "Update"
+section = "oul_protocol"
+order = 25
+video = "qualia"
+match = [{ recipe = "oul_update" }]
+
+[[steps]]
+id = "oul_test"
+label = "Test"
+section = "oul_protocol"
+order = 30
+video = "qualia"
+match = [{ recipe = "oul_test" }]
+
+# An empty value means the field is unrecorded.
+[[steps]]
+id = "t1"
+label = "T1 training"
+section = "nort_protocol"
+order = 20
+video = "qualia"
+match = [
+  { phase = "training" },
+  { phase = "", stage = "1" },
+  { phase = "", stage = "", recipe = "nort_training" },
+]
+
+[[steps]]
+id = "t2"
+label = "T2 test"
+section = "nort_protocol"
+order = 30
+video = "qualia"
+match = [
+  { phase = "test" },
+  { phase = "", stage = "2" },
+  { phase = "", stage = "", recipe = "nort_novelty" },
+]
+
+[objects]
+slots = ["A", "B"]
+label_field = "object_{slot}_label"
+placement_field = "object_{slot}_placement"
+roles = ["familiar", "novel", "variable"]
+perimeter_prefix = "object_"
+
+[features]
+panels = ["object_discrimination"]
+panel_exclude_labels = ["preference_summary"]
+# NORT T1/T2 also export centre/periphery zone metrics (owner decision 2026-10-07).
+previews = [
+  { kind = "detection_fields", title = "Detection fields" },
+  { kind = "center_periphery", title = "Centre / periphery" },
+]
+diagnostic_prefixes = ["body_proximity_", "olfaction_", "whisker_interaction_"]
+folded = [
+  { prefix = "proximity_diagnostic_", reason = "folded: the same gate is a component cell of its scored row" },
+  { prefix = "gaze_field_", reason = "folded: angle geometry; shown by the within-angle cell and the head-angle series" },
+  { prefix = "geometry_vectors_", reason = "folded: angle geometry; shown by the within-angle cell and the head-angle series" },
+  { prefix = "recipe_", reason = "folded: diagnostic channel comparison; channel final masks are in band 2" },
+  { prefix = "cumulative_observation_", reason = "folded: diagnostic channel comparison; channel final masks are in band 2" },
+  { prefix = "multiobject_", reason = "folded: diagnostic channel comparison; channel final masks are in band 2" },
+]
+
+[[edge_cases]]
+label = "lowest total exploration"
+lowest = "total_exploration_s"
+
+# Whisker-fan parameter variants (`<analysis>__<variant>`): `whisker_age` (age-table
+# reach) is principal when recorded, else the bare analysis; the others are
+# compared in their own post-analysis contexts. Exactly one variant of a session
+# is scored in any context.
+[contexts]
+principal = ["whisker_age"]
+rules = [
+  { pattern = "whisker_age", label = "Whiskers (age table)", rank = 0 },
+  { pattern = "whisker{n}mm", label = "Whiskers {n} mm" },
+  { pattern = "nose_only", label = "Nose only", rank = 2, comparison = true },
+]
+
+[prose]
+contexts_note = "One figure per whisker-reach context (age table, 20 mm, 30 mm); the nose-only comparator is a reference."
+
+[post_analysis]
+assay = "nort"
+
+[[endpoints]]
+name = "DI"
+label = "DI"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+figures = ["pre_post_trajectories"]
+detail = "indices.discrimination_index"
+step = "t2"
+
+# Secondary post-analysis outputs: no model, not review criteria.
+[[endpoints]]
+name = "RI"
+family = "secondary"
+
+[[endpoints]]
+name = "LR"
+family = "secondary"
+
+[[endpoints]]
+name = "object_bias"
+family = "secondary"
+
+[[endpoints]]
+name = "side_bias"
+family = "secondary"
+
+[[blocks]]
+id = "context_card"
+
+[[blocks]]
+id = "protocol_timeline"
+
+[[blocks]]
+id = "endpoint_table"
+requires = ["metrics"]
+
+[[blocks]]
+id = "figure_gallery"
+
+[[blocks]]
+id = "animal_step_grid"
+
+[[blocks]]
+id = "video_embed"
+requires = ["video"]
+
+[[blocks]]
+id = "object_role_legend"
+requires = ["objects"]
+
+[[blocks]]
+id = "qc_flags"
+requires = ["metrics"]

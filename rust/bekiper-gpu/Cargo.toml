@@ -1,0 +1,26 @@
+[package]
+name = "bekiper-gpu"
+description = "Zero-copy GPU pipeline: Vulkan/VA-API decode → HIP preprocess → ONNX inference"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+build = "build.rs"
+
+[features]
+default = ["vulkan"]
+vaapi = []
+vulkan = ["dep:ash"]
+
+[dependencies]
+libc = "0.2"
+libloading = "0.8"
+thiserror.workspace = true
+tracing.workspace = true
+
+# Vulkan device/instance management (behind "vulkan" feature)
+ash = { version = "0.38", optional = true }
+
+[build-dependencies]
+
+[dev-dependencies]

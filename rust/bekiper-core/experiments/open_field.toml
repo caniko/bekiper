@@ -1,0 +1,131 @@
+# Open field test. In a project that also records object recognition, the open
+# field session is the NORT habituation step and joins its protocol section.
+id = "open_field"
+key = "oft"
+task_type = "open_field"
+aliases = ["open_field_test", "oft"]
+display_name = "Open field (NORT habituation)"
+short_name = "OFT"
+archetype = "zone_occupancy"
+order = 10
+
+[[sections]]
+id = "open_field"
+title = "Open field"
+order = 0
+by_timepoint = true
+
+[[steps]]
+id = "habituation"
+label = "Habituation (OFT)"
+section = "nort_protocol"
+order = 10
+requires_experiment = "object_recognition"
+# The OFT `phase` is the metadata batch letter, not a protocol phase.
+suffix = "batch {phase}"
+
+[[steps]]
+id = "open_field"
+label = "Open field"
+section = "open_field"
+order = 10
+suffix = "batch {phase}"
+
+[features]
+panels = ["center_periphery"]
+previews = [{ kind = "center_periphery", title = "Centre / periphery" }]
+
+# OFT has no parameter variants: its principal is the bare analysis. Declared so
+# a variant (`<analysis>__<variant>`) can be added without a schema change.
+[contexts]
+principal = []
+
+[post_analysis]
+assay = "oft"
+
+[[endpoints]]
+name = "total_distance_m"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+
+[[endpoints]]
+name = "mean_speed_m_per_s"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+
+[[endpoints]]
+name = "center_time_s"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+
+[[endpoints]]
+name = "center_time_pct"
+label = "centre time %"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+figures = ["pre_post_trajectories"]
+detail = "center_time_pct"
+
+[[endpoints]]
+name = "center_entries"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+
+[[endpoints]]
+name = "latency_to_first_center_entry_s"
+family = "primary"
+model = "gaussian_ols"
+criteria = true
+
+[[endpoints]]
+name = "periphery_time_pct"
+family = "secondary"
+
+[[endpoints]]
+name = "freezing_s"
+family = "secondary"
+
+[[endpoints]]
+name = "grooming_s"
+family = "secondary"
+
+[[endpoints]]
+name = "rearing_s"
+family = "secondary"
+
+[[endpoints]]
+name = "immobility_s"
+family = "secondary"
+
+[[endpoints]]
+name = "fecal_boli_count"
+family = "secondary"
+
+[[blocks]]
+id = "context_card"
+
+[[blocks]]
+id = "protocol_timeline"
+
+[[blocks]]
+id = "endpoint_table"
+requires = ["metrics"]
+
+[[blocks]]
+id = "figure_gallery"
+
+[[blocks]]
+id = "animal_step_grid"
+
+[[blocks]]
+id = "video_embed"
+requires = ["video"]
+
+[[blocks]]
+id = "qc_flags"
+requires = ["metrics"]

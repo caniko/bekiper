@@ -1,0 +1,16 @@
+[package]
+name = "bekiper-perimeter"
+description = "Perimeter geometry types and spatial operations for bekiper"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bekiper-core.workspace = true
+bekiper-math.workspace = true
+polars.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+toml.workspace = true

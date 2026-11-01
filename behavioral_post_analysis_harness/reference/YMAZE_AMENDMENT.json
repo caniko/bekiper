@@ -1,0 +1,18 @@
+{
+  "decision_id": "YM-2026-10-04",
+  "origin": "researcher_decision",
+  "approval_or_plan_reference": "User clarification in implementation session, 2026-10-04; corroborating May addendum in examples/neo/imen/bekiper_config.toml",
+  "scope": [25, 45, 65],
+  "geometry_version": "imen_radial_vertex_span_v1",
+  "center_definition": "arithmetic_mean_of_canonical_center_vertices",
+  "radius_formula": "r_min + p * (r_max - r_min)",
+  "boundary": "ray_casting_polygon_contains AND squared_distance >= radius_squared",
+  "required_landmarks": ["head_center", "tail_base"],
+  "same_arm": true,
+  "event": "false_to_true_dual_landmark_predicate",
+  "timestamp": "second_required_landmark_crossing_frame",
+  "minimum_dwell_s": 0,
+  "temporal_mitigation": "none",
+  "supersedes": ["principal_Ymaze_recipe_dwell", "generic_center_to_tip_geometry_interpretation"],
+  "unresolved": ["D01", "D03", "D09"]
+}

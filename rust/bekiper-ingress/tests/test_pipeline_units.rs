@@ -1,0 +1,12 @@
+include!("test_pipeline_units/summariesfile.rs");
+include!("test_pipeline_units/parse_imen_scale_configs.rs");
+include!("test_pipeline_units/setup_experiment_artifacts.rs");
+include!("test_pipeline_units/summary_and_export_cheeseboard.rs");
+include!("test_pipeline_units/behaviour_oft_stationary_animal_freezes.rs");
+include!("test_pipeline_units/stage_freshness_becomes_true_after_write.rs");
+include!("test_pipeline_units/aggregate_variant_routing.rs");
+include!("test_pipeline_units/ymaze_variants_emit_per_variant_sheets.rs");
+include!("test_pipeline_units/animal_overview_pulls_cross_experiment_columns.rs");
+include!("test_pipeline_units/ymaze_valid_le_raw_invariant.rs");
+include!("test_pipeline_units/ymaze_valid_exceeds_raw_drops_row.rs");
+include!("test_pipeline_units/ymaze_per_sheet_invariants_hold.rs");

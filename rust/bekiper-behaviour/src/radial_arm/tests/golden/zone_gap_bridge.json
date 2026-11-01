@@ -1,0 +1,23 @@
+{
+  "bridged": {
+    "arm_sequence": [
+      "A"
+    ],
+    "raw_arm_sequence": [
+      "A",
+      "A"
+    ],
+    "zone_max_gap_seconds": 0.1
+  },
+  "legacy": {
+    "arm_sequence": [
+      "A",
+      "A"
+    ],
+    "raw_arm_sequence": [
+      "A",
+      "A"
+    ],
+    "zone_max_gap_seconds": 0.0
+  }
+}

@@ -1,0 +1,237 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  Bekiper Project Configuration                                   ║
+# ║                                                                  ║
+# ║  All commented-out settings show their default values.           ║
+# ║  Uncomment and change only what you need.                        ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+# ── Inspection plot profiles ────────────────────────────────────────
+# Per-figure rendering profiles. Each profile is a bundle of
+# `[inspect.plot]` field overrides; routing rules map a feature's
+# (kind, label) to a profile name.
+#
+# CLI overrides (highest precedence): pass `--profile`, `--render-mode`,
+# `--density-scale`, `--min-speed`, `--velocity-field`, `--small-multiples`
+# to `bekiper inspect plot`. Values resolve through CLI/constructor overrides,
+# BEKIPER_PLOT_* environment variables, this TOML, then built-in defaults.
+# Normal runs capture the resolved settings; replay ignores later environment
+# changes so the retained presentation can be reproduced.
+#
+# Built-in profiles (always available):
+#   - line              : single-line trajectory (legacy default)
+#   - density           : 2D occupancy heatmap, no line
+#   - dense_trajectory  : heatmap + translucent line layered (best for
+#                         tightly cropped panels — Y-maze arms etc.)
+#   - temporal          : time-coloured trajectory (path order matters)
+#   - print_friendly    : larger fonts, thicker lines for slides/print
+#   - active_only       : skip stationary frames (≥ 2 cm/s) — removes
+#                         the "sitting still" scribble
+#   - density_log       : log-scaled occupancy heatmap so brief visits
+#                         stay visible against long dwell zones
+#   - velocity_field    : faint heatmap + mean-velocity quiver per bin
+#                         (reveals habitual movement direction)
+#   - state_colored     : colour line by behavioural-state columns
+#                         (provide ``state_color_columns`` override)
+#   - small_multiples_3 : split a long Y-maze arm-sections session into
+#                         3 side-by-side temporal panels
+#   - small_multiples_4 : same with 4 panels
+#
+# Add or override a built-in by re-declaring the table:
+# [inspect.plot.profiles.dense_trajectory]
+# density_alpha = 0.55
+#
+# Define a brand-new profile the same way:
+# [inspect.plot.profiles.my_profile]
+# trajectory_render_mode = "both"
+# linewidth = 2.5
+#
+# Routing rules (first match wins). Either ``kind`` or ``label`` (or
+# both) can be omitted to match anything; both are fnmatch patterns.
+
+[inspect.plot]
+fig_format = ".png"
+min_dpi = 300
+trajectory_gradient = true
+
+# Y-maze arm-section panels are tightly cropped — the long-session line
+# tangle is unreadable, so render an occupancy density behind it.
+[[inspect.plot.figure_profiles]]
+kind = "ymaze_arm_sections"
+profile = "dense_trajectory"
+
+# OFT center/periphery already paints a heatmap inside the renderer;
+# this rule makes it slightly more opaque so the zone read is louder.
+[[inspect.plot.figure_profiles]]
+kind = "center_periphery"
+profile = "density"
+
+# NORT object-decomposition stories benefit from temporal colouring so
+# the path order around each object reads at a glance.
+[[inspect.plot.figure_profiles]]
+kind = "story"
+label = "object_decomposition_*"
+profile = "temporal"
+
+# Y-maze arm-occupancy stories are dense too — same treatment.
+[[inspect.plot.figure_profiles]]
+kind = "story"
+label = "in_*arm_*"
+profile = "dense_trajectory"
+
+# Example: configure state_colored with the columns this dataset has.
+# Uncomment + tweak the column names to enable.
+# [inspect.plot.profiles.state_colored]
+# state_color_columns = { freezing = "deepskyblue", grooming = "magenta", rearing = "orange" }
+# [[inspect.plot.figure_profiles]]
+# kind = "ymaze_arm_sections"
+# profile = "state_colored"
+
+# ── Project ─────────────────────────────────────────────────────────
+[project]
+project_name = "imen_pilot"
+data_directory = "."        # root for relative video paths
+output_dir = "output"       # where results are written
+
+# Runtime settings (optional).
+# [project.runtime]
+# minimum_seconds_tolerance = 0.5      # min bout duration to count (s)
+# maximum_seconds_distraction = 0.333  # max gap to bridge between bouts (s)
+# num_threads = 4                      # Rayon thread count (omit = all cores)
+# memory_scheduler_enabled = true      # throttle new parallel work under RAM pressure
+# max_ram_usage_fraction = 0.80        # whole-machine RAM fraction cap for new work
+
+# ── Pipeline ────────────────────────────────────────────────────────
+[post_analysis]
+enabled = true
+ymaze_primary_thresholds = [0, 25, 45, 65]
+primary_workers = 1
+
+[pipeline]
+pose_label_model = "imen_dlc" # trained DLC labels: nose, ears, tail/base_tail
+likelihood_threshold = 0.9    # min pose confidence to keep a keypoint
+smoothing_window = 5          # median filter window (frames)
+max_velocity = 50.0           # outlier rejection: max px/frame
+
+[[pipeline.midpoint_groups]]
+output_label = "center_ear"
+source_labels = ["left_ear", "right_ear"]
+
+# Body centroid (mid nose↔tail) — used for OFT/NORT zone-entry tracking,
+# matching the criteria doc which calls for "body centroid" rather than head.
+[[pipeline.midpoint_groups]]
+output_label = "body_center"
+source_labels = ["nose", "tail"]
+
+# The trained Imen DLC model has a hardcoded four-point skeleton preset. The
+# augment stage applies that model-owned topology after deriving `center_ear`.
+
+# ── Pose data ───────────────────────────────────────────────────────
+# neo/imen uses trained DeepLabCut H5 outputs mirrored under
+# deeplabcut/poses/<video path>.h5. Do not fall back to the generic
+# SuperAnimal ONNX model for this dataset.
+
+# ── Shared task defaults ────────────────────────────────────────────
+# Apply to every scan. Override per-scan under [scan.task_params].
+#
+# freezing_speed_threshold = 0.02      # speed below which animal is frozen (m/s)
+# min_dwell_seconds       = 1.0        # min time in a zone to count as entry (s)
+# peripheral_band_fraction = 0.2       # peripheral zone width / arena side
+#
+# Body-part columns (DLC SuperAnimal defaults):
+# centroid_coords = { x = "mouse_center_x", y = "mouse_center_y" }
+# nose_coords     = { x = "nose_x",         y = "nose_y" }
+# head_coords     = { x = "center_ear_x",   y = "center_ear_y" }
+# tail_coords     = { x = "tail_base_x",    y = "tail_base_y" }
+
+# ════════════════════════════════════════════════════════════════════
+#  INGRESS PROFILE — videomap owns video discovery + annotation metadata
+# ════════════════════════════════════════════════════════════════════
+
+[[ingress_profile]]
+profile = "videomap"
+
+# (OFT block stripped for y-maze-only run)
+# ── Y-maze ──────────────────────────────────────────────────────────
+[[ingress_profile.tasks]]
+video_dir = "Y-maze videos"
+pose_data_dir = "deeplabcut/poses"
+task_type = "y_maze"
+meters_per_pixel = { method = "arm_length", meters = 0.35 }
+recipe = "ymaze"
+backend = ["manual_annotation"]
+annotations = { dir = "annotations/ymaze" }
+
+[ingress_profile.tasks.task_params]
+centroid_coords = { x = "center_ear_x", y = "center_ear_y" }
+nose_coords = { x = "nose_x", y = "nose_y" }
+head_coords = { x = "center_ear_x", y = "center_ear_y" }
+tail_coords = { x = "base_tail_x", y = "base_tail_y" }
+
+[ingress_profile.tasks.task_params.ymaze]
+# Owner decision 2026-10-28: arm-start cross-line geometry (see
+# bekiper_config.toml), no dwell except arm0_dwell1s, and ≤1 s gap bridging.
+threshold_geometry = "imen_arm_start_crossline_v1"
+# Trim leading no-animal frames; matches our project's interpretation of
+# the criteria doc (override: see "Y-maze analysis criteria" note).
+start_mode = "first_detection"
+apply_dwell_filter = false
+zone_max_gap_seconds = 1.0
+pose_gap_fill_seconds = 0.0
+arm_membership_hysteresis = false
+
+[ingress_profile.tasks.task_params.ymaze.temporal_policy]
+min_duration_seconds = 0.0
+duration_comparison = "at_least"
+max_gap_seconds = 0.0
+
+# Four equal, independent primary contexts. Archived radial identities
+# (proximal25/45/65, compare_0pct_*) stay historical.
+[[ingress_profile.tasks.variants]]
+name = "arm0_dwell1s"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.0
+apply_dwell_filter = true
+[ingress_profile.tasks.variants.ymaze.temporal_policy]
+min_duration_seconds = 1.0
+duration_comparison = "at_least"
+max_gap_seconds = 1.0
+
+[[ingress_profile.tasks.variants]]
+name = "arm25"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.25
+
+[[ingress_profile.tasks.variants]]
+name = "arm45"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.45
+
+[[ingress_profile.tasks.variants]]
+name = "arm65"
+[ingress_profile.tasks.variants.ymaze]
+proximal_threshold = 0.65
+
+# ── Consolidated cross-trial export ───────────────────────────────
+[aggregate]
+output_filename = "imen_results.ods"
+
+[aggregate.metadata]
+path = "animal_metadata.xlsx"
+sheet = "Updated_Mice-overview"
+missing_policy = "allow_blanks"
+
+[aggregate.recipe_to_sheet]
+nort_habituation = "nort_habituation"
+nort_training = "nort_training"
+nort_novelty = "nort_novelty"
+open_field = "oft"
+y_maze = "ymaze"
+ymaze = "ymaze"
+ymaze__proximal25 = "ymaze_proximal25"
+ymaze__proximal45 = "ymaze_proximal45"
+ymaze__proximal65 = "ymaze_proximal65"
+ymaze__compare_0pct_dwell0s = "ymaze_compare_0pct_dwell0s"
+ymaze__arm0_dwell1s = "ymaze_arm0_dwell1s"
+ymaze__arm25 = "ymaze_arm25"
+ymaze__arm45 = "ymaze_arm45"
+ymaze__arm65 = "ymaze_arm65"

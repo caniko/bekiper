@@ -1,0 +1,47 @@
+{
+  "fixture_kind": "synthetic_rule_parity_not_scientific_approval",
+  "geometry_version": "imen_radial_vertex_span_v1",
+  "center": [[-0.1, -0.1], [0.1, -0.1], [0.1, 0.1], [-0.1, 0.1]],
+  "arms": {
+    "A": [[0.1, 0], [0.6, 0.05], [1.1, 0], [0.6, -0.05]],
+    "B": [[0, 0.1], [0.05, 0.6], [0, 1.1], [-0.05, 0.6]],
+    "C": [[-0.1, 0], [-0.6, 0.05], [-1.1, 0], [-0.6, -0.05]]
+  },
+  "sample_columns": ["timestamp_s", "head_center_x", "head_center_y", "tail_base_x", "tail_base_y"],
+  "cases": [
+    {
+      "name": "second_crossing_reentry_missing_pose_and_threshold_sensitivity",
+      "thresholds": [25, 45, 65],
+      "samples": [
+        [0, 0, 0, 0, 0], [0.03, 0.9, 0, 0.2, 0], [0.06, 0.9, 0, 0.9, 0],
+        [0.09, 0.9, 0, 0.2, 0], [0.12, 0.9, 0, 0.9, 0], [0.15, 0, 0, 0, 0],
+        [0.18, 0, 0.9, 0.9, 0], [0.21, 0, 0.9, 0, 0.9], [0.24, null, 0.9, 0, 0.9],
+        [0.27, 0, 0.9, 0, 0.9], [0.30, -0.9, 0, -0.9, 0], [0.33, 0.5, 0, 0.5, 0],
+        [0.36, 0, 0, 0, 0], [0.39, -0.6, 0, -0.6, 0]
+      ],
+      "expected": {
+        "25": {"sequence": ["A", "A", "B", "B", "C", "A", "C"], "entry_frames": {"A": [2, 4, 11], "B": [7, 9], "C": [10, 13]}},
+        "45": {"sequence": ["A", "A", "B", "B", "C", "C"], "entry_frames": {"A": [2, 4], "B": [7, 9], "C": [10, 13]}},
+        "65": {"sequence": ["A", "A", "B", "B", "C"], "entry_frames": {"A": [2, 4], "B": [7, 9], "C": [10]}}
+      }
+    },
+    {
+      "name": "inclusive_boundary_25",
+      "thresholds": [25],
+      "samples": [[0, 0, 0, 0, 0], [0.03, 0.349999999, 0, 0.349999999, 0], [0.06, 0.35, 0, 0.35, 0], [0.09, 0.350000001, 0, 0.350000001, 0], [0.12, 0, 0, 0, 0], [0.15, 0.34995, 0.01, 0.34995, 0.01]],
+      "expected": {"25": {"sequence": ["A", "A"], "entry_frames": {"A": [2, 5], "B": [], "C": []}, "arm_A_predicate": [false, false, true, true, false, true]}}
+    },
+    {
+      "name": "inclusive_boundary_45",
+      "thresholds": [45],
+      "samples": [[0, 0, 0, 0, 0], [0.03, 0.549999999, 0, 0.549999999, 0], [0.06, 0.55, 0, 0.55, 0], [0.09, 0.550000001, 0, 0.550000001, 0], [0.12, 0, 0, 0, 0], [0.15, 0.54995, 0.01, 0.54995, 0.01]],
+      "expected": {"45": {"sequence": ["A", "A"], "entry_frames": {"A": [2, 5], "B": [], "C": []}, "arm_A_predicate": [false, false, true, true, false, true]}}
+    },
+    {
+      "name": "inclusive_boundary_65",
+      "thresholds": [65],
+      "samples": [[0, 0, 0, 0, 0], [0.03, 0.749999999, 0, 0.749999999, 0], [0.06, 0.75, 0, 0.75, 0], [0.09, 0.750000001, 0, 0.750000001, 0], [0.12, 0, 0, 0, 0], [0.15, 0.74995, 0.01, 0.74995, 0.01]],
+      "expected": {"65": {"sequence": ["A", "A"], "entry_frames": {"A": [2, 5], "B": [], "C": []}, "arm_A_predicate": [false, false, true, true, false, true]}}
+    }
+  ]
+}

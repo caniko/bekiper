@@ -1,0 +1,54 @@
+# Legacy source:
+# /data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/animal/Chrys/OpenField/result/rectangle.xlsx
+source_workbook = "/data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/animal/Chrys/OpenField/result/rectangle.xlsx"
+source_sheet = "Ellipsis"
+source_row = "392_0"
+expected_sheet = "Ellipsis"
+
+experiment = "392_seq0_oft"
+fps = 15.0
+meters_per_pixel = 0.001
+task_type = "open_field"
+
+[aggregate.recipe_to_sheet]
+oft = "Ellipsis"
+
+[animal_metadata]
+animal = 392
+
+[detailed]
+excluded = false
+
+[detailed.center_summary]
+zone_name = "in_center"
+entries = 52
+duration_seconds = 130.4
+distance_meters = 5.31971484802526
+
+[detailed.periphery_summary]
+zone_name = "in_periphery"
+entries = 53
+duration_seconds = 794.7333333333333
+distance_meters = 77.57101447043691
+
+[detailed.center_motion_summary]
+zone_name = "in_center"
+total_displacement_meters = 5.31971484802526
+median_speed_mps = 0.07424310456051998
+median_acceleration_mps2 = 0.02715588677028999
+freezing_seconds = 0.0
+
+[detailed.periphery_motion_summary]
+zone_name = "in_periphery"
+total_displacement_meters = 77.57101447043691
+median_speed_mps = 0.07676318068385336
+median_acceleration_mps2 = 0.03302913368416506
+freezing_seconds = 0.0
+
+[expected_cells]
+center_entries = 52
+center_duration_s = 130.4
+center_motion_distance_m = 5.31971484802526
+periphery_entries = 53
+periphery_duration_s = 794.7333333333333
+periphery_motion_distance_m = 77.57101447043691

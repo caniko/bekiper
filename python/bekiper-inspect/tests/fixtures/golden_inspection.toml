@@ -1,0 +1,427 @@
+labels = ["nose", "tail_base"]
+
+[coordinate_columns.nose]
+x = "nose_x"
+y = "nose_y"
+
+[coordinate_columns.tail_base]
+x = "tail_x"
+y = "tail_y"
+
+[[feature_inspections]]
+kind = "state_distribution"
+label = "session_composition_fixture"
+category_labels = ["object_1", "Unassigned", "Missing"]
+frame_counts = [50, 40, 10]
+seconds = [5.0, 4.0, 1.0]
+percentages = [50.0, 40.0, 10.0]
+denominator_frames = 100
+denominator_seconds = 10.0
+source_columns = ["olfaction"]
+basis = "half-open CFR 1/fps; evaluated masks, no extra tolerance"
+style = "pie"
+description = "Whole-session composition fixture"
+
+[[feature_inspections]]
+description = "Perimeter 'arena' on experiment frame"
+kind = "perimeter"
+label = "perimeter_arena"
+perimeter_label = "arena"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "Zone confinement 'in_zone_a' inside perimeter 'zone_a'"
+kind = "zone"
+label = "zone_in_zone_a"
+perimeter_label = "zone_a"
+representative_frame_index = 42
+result_column = "in_zone_a"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "4x4 quadrant grid 'open_field_grid' on experiment frame"
+kind = "quadrant"
+label = "quadrant_open_field_grid"
+quadrant_label = "open_field_grid"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "Heuristic 'body_proximity' over experiment frame"
+kind = "heuristic"
+label = "heuristic_body_proximity"
+result_column = "body_prox"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "Heuristic decomposition for 'body_proximity'"
+heuristic_name = "body_proximity"
+kind = "heuristic_decomposition"
+label = "heuristic_decomposition_body_proximity"
+perimeter_label = "arena"
+result_column = "body_prox_final"
+show_final_result = true
+
+[[feature_inspections.components]]
+coordinate_labels = ["nose"]
+label = "center_ear_near"
+perimeter_label = "arena"
+result_column = "near_arena"
+
+[[feature_inspections.components]]
+coordinate_labels = ["nose"]
+label = "raw_combined"
+perimeter_label = "arena"
+result_column = "body_prox"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "Heuristic 'freezing' over experiment frame"
+kind = "heuristic_cloud"
+label = "heuristic_freezing"
+result_column = "freezing"
+
+[[feature_inspections]]
+description = "Body axis vector (nose → tail_base) on experiment frame"
+from_coordinate_label = "nose"
+kind = "angle"
+label = "angle_nose_tail_base"
+to_coordinate_label = "tail_base"
+
+[[feature_inspections]]
+coordinate_labels = ["tail_base"]
+description = "Trajectory of 'tail_base' on experiment frame"
+kind = "trajectory"
+label = "trajectory_tail_base"
+
+[[feature_inspections]]
+angle_column = "heading_rad"
+cone_width_deg = 60.0
+description = "Olfactory sensing cone at nose"
+kind = "ray_cast"
+label = "raycast_nose"
+length_meters = 0.05
+origin_label = "nose"
+
+[[feature_inspections]]
+cone_half_angle_deg = 45.0
+contact_distance_m = 0.005
+description = "Detection fields on the animal"
+head_label = "tail_base"
+kind = "detection_fields"
+label = "detection_fields"
+nose_label = "nose"
+nose_reach_m = 0.03
+whisker_apex_fraction = 0.8
+whisker_half_angle_deg = 30.0
+whisker_length_m = 0.025
+
+[[feature_inspections]]
+description = "How meters-per-pixel was derived"
+kind = "scale_derivation"
+label = "scale_derivation"
+representative_frame_index = 0
+
+[[feature_inspections]]
+description = "speed_mps over time (m/s)"
+kind = "time_series"
+label = "timeseries_speed_mps"
+unit = "m/s"
+value_column = "speed_mps"
+
+[[feature_inspections]]
+buffer_meters = 0.02
+coordinate_labels = ["nose"]
+description = "Proximity to arena within 0.02m buffer"
+kind = "proximity"
+label = "proximity_arena"
+perimeter_label = "arena"
+result_column = "near_arena"
+
+[[feature_inspections]]
+alternation_count = 5
+coordinate_labels = ["nose"]
+description = "Object discrimination (nort_novelty)"
+discrimination_index = 0.25
+exploration_times = [12.5, 7.5]
+kind = "object_discrimination"
+label = "object_discrimination"
+object_labels = ["novel", "familiar"]
+protocol = "nort_novelty"
+recognition_index = 0.625
+title_override = "Object Discrimination: NORT Novelty"
+
+[[feature_inspections.qualia_channels]]
+heuristic_type = "body_proximity"
+per_object_bouts = [3, 2]
+per_object_seconds = [8.0, 5.0]
+relative_bias = [61.5, 38.5]
+
+[[feature_inspections.qualia_channels]]
+heuristic_type = "olfaction"
+per_object_bouts = [4, 3]
+per_object_seconds = [10.0, 6.0]
+relative_bias = [62.5, 37.5]
+
+[[feature_inspections.qualia_channels]]
+heuristic_type = "whisker_interaction"
+per_object_bouts = [2, 2]
+per_object_seconds = [6.0, 3.5]
+relative_bias = [63.2, 36.8]
+
+[[feature_inspections]]
+alternation_pct = 66.7
+arm_sequence = ["A", "B", "C", "A", "C"]
+coordinate_labels = ["nose"]
+description = "Arm entry sequence"
+kind = "arm_sequence"
+label = "arm_sequence"
+
+[[feature_inspections]]
+coordinate_labels = ["nose"]
+description = "Y-maze arm section thresholds"
+kind = "ymaze_arm_sections"
+label = "ymaze_arm_sections"
+perimeter_label = "ymaze"
+proximal_threshold = 0.25
+
+[[feature_inspections.threshold_lines]]
+arm = "A"
+p1 = [0.35, -0.15]
+p2 = [0.325, 0.15]
+
+[[feature_inspections]]
+arena_perimeter_label = "arena"
+center_perimeter_label = "zone_a"
+center_time_pct = 35.2
+coordinate_labels = ["nose"]
+description = "Center vs. periphery occupancy"
+kind = "center_periphery"
+label = "center_periphery"
+periphery_time_pct = 64.8
+
+[[heuristics]]
+name = "body_proximity"
+result_column = "body_prox"
+seconds = 1.33
+total_frames = 100
+true_frames = 40
+truth_spans = [[10, 30], [50, 70]]
+
+[[heuristics]]
+name = "olfaction"
+result_column = "olfaction"
+seconds = 0.67
+total_frames = 100
+true_frames = 20
+truth_spans = [[5, 25]]
+
+[[heuristics]]
+name = "freezing"
+result_column = "freezing"
+seconds = 1.0
+total_frames = 100
+true_frames = 30
+truth_spans = [[40, 70]]
+
+[label_colors]
+nose = "#1f77b4"
+tail_base = "#ff7f0e"
+
+[[perimeters]]
+center_x = 0.15
+center_y = 0.12
+label = "arena"
+radius = 0.14
+shape = "circle"
+
+[[perimeters]]
+center_x = 0.1
+center_y = 0.1
+height = 0.04
+label = "zone_a"
+shape = "rectangle"
+width = 0.05
+
+[[perimeters]]
+label = "pen"
+shape = "polygon"
+vertices = [[0.0, 0.0], [0.1, 0.0], [0.1, 0.1], [0.0, 0.1]]
+
+[[perimeters]]
+arms = [
+  [
+    [
+      0.14,
+      0.16,
+    ],
+    [
+      0.16,
+      0.16,
+    ],
+    [
+      0.16,
+      0.28,
+    ],
+    [
+      0.14,
+      0.28,
+    ],
+  ],
+  [
+    [
+      0.14,
+      0.14,
+    ],
+    [
+      0.04,
+      0.08,
+    ],
+    [
+      0.05,
+      0.06,
+    ],
+    [
+      0.15,
+      0.12,
+    ],
+  ],
+  [
+    [
+      0.16,
+      0.14,
+    ],
+    [
+      0.26,
+      0.08,
+    ],
+    [
+      0.25,
+      0.06,
+    ],
+    [
+      0.15,
+      0.12,
+    ],
+  ],
+]
+center_vertices = [[0.14, 0.14], [0.16, 0.14], [0.15, 0.16]]
+label = "ymaze"
+shape = "radial_maze"
+
+[[pixel_perimeters]]
+center_x = 150.0
+center_y = 120.0
+label = "arena"
+radius = 140.0
+shape = "circle"
+
+[[pixel_perimeters]]
+center_x = 100.0
+center_y = 100.0
+height = 40.0
+label = "zone_a"
+shape = "rectangle"
+width = 50.0
+
+[[pixel_perimeters]]
+label = "pen"
+shape = "polygon"
+vertices = [[0.0, 0.0], [100.0, 0.0], [100.0, 100.0], [0.0, 100.0]]
+
+[[pixel_perimeters]]
+arms = [
+  [
+    [
+      140.0,
+      160.0,
+    ],
+    [
+      160.0,
+      160.0,
+    ],
+    [
+      160.0,
+      280.0,
+    ],
+    [
+      140.0,
+      280.0,
+    ],
+  ],
+  [
+    [
+      140.0,
+      140.0,
+    ],
+    [
+      40.0,
+      80.0,
+    ],
+    [
+      50.0,
+      60.0,
+    ],
+    [
+      150.0,
+      120.0,
+    ],
+  ],
+  [
+    [
+      160.0,
+      140.0,
+    ],
+    [
+      260.0,
+      80.0,
+    ],
+    [
+      250.0,
+      60.0,
+    ],
+    [
+      150.0,
+      120.0,
+    ],
+  ],
+]
+center_vertices = [[140.0, 140.0], [160.0, 140.0], [150.0, 160.0]]
+label = "ymaze"
+shape = "radial_maze"
+
+[[pixel_quadrants]]
+cols = 4
+label = "open_field_grid"
+rows = 4
+x_max = 300.0
+x_min = 0.0
+y_max = 240.0
+y_min = 0.0
+
+[[quadrants]]
+cols = 4
+label = "open_field_grid"
+rows = 4
+x_max = 0.3
+x_min = 0.0
+y_max = 0.24
+y_min = 0.0
+
+[scale_derivation]
+meters_per_pixel = 0.001
+method = "arena_side"
+physical_meters = 0.4
+pixel_measurement = 400.0
+reference_label = "arena"
+
+[settings]
+invert_y = false
+maximum_seconds_distraction = 0.333
+meters_per_pixel = 0.001
+minimum_seconds_tolerance = 0.5
+
+[video]
+fps = 30.0
+meters_per_pixel = 0.001
+resolution = [640, 480]
+total_frames = 100

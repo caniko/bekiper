@@ -1,0 +1,43 @@
+[package]
+name = "bekiper-post-analysis"
+description = "Native, provenance-preserving behavioural post-analysis"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+bekiper-core.workspace = true
+bekiper-feature.workspace = true
+bekiper-math.workspace = true
+bekiper-perimeter.workspace = true
+clap.workspace = true
+csv.workspace = true
+nalgebra = { version = "0.32.6", default-features = false, features = ["std"] }
+png = "0.18"
+polars.workspace = true
+rayon.workspace = true
+roxmltree.workspace = true
+serde.workspace = true
+# Presentation exports reread canonical JSON; preserve the exact IEEE-754 value.
+serde_json = { workspace = true, features = ["float_roundtrip"] }
+sha2 = "0.10"
+statrs = { version = "0.18", default-features = false }
+tempfile = "3"
+themekit.workspace = true
+toml.workspace = true
+zip.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1", features = ["process"] }
+
+[build-dependencies]
+sha2 = "0.10"
+
+[dev-dependencies]
+bekiper-behaviour.workspace = true
+
+[[bin]]
+name = "bekiper-post-analysis"
+path = "src/main.rs"

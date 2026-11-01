@@ -1,0 +1,18 @@
+{
+  "title": "bekiper",
+  "description": "Behavioural kinematics analysis for rodent experiments. Scores open field, novel object recognition and Y-maze trials from markerless pose estimates, with registered cohort post-analysis.",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Tartanoglu, Can H."
+    }
+  ],
+  "license": "AGPL-3.0-only",
+  "keywords": [
+    "behavioural neuroscience",
+    "pose estimation",
+    "novel object recognition",
+    "Y-maze",
+    "open field"
+  ]
+}

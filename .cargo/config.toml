@@ -1,0 +1,10 @@
+# Project-specific wasm flags for dioxus builds.
+# The rest of the cargo config comes from harbor-rs via a cache-keyed CARGO_HOME.
+
+[target.wasm32-unknown-unknown]
+rustflags = ["--cfg", "web_sys_unstable_apis"]
+
+# The export prunes private workspace members, so Cargo regenerates Cargo.lock.
+# The engine identity binds to the original workspace lock (see PROVENANCE.md).
+[env]
+BEKIPER_SOURCE_CARGO_LOCK = { value = "Cargo.lock.source", relative = true }

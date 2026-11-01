@@ -1,0 +1,25 @@
+{
+  "latched": {
+    "arm_membership_hysteresis": true,
+    "arm_sequence": [
+      "A",
+      "B",
+      "C"
+    ],
+    "correct_alternations": 1,
+    "incorrect_alternations": 0,
+    "neutral_triads": 0
+  },
+  "legacy": {
+    "arm_membership_hysteresis": false,
+    "arm_sequence": [
+      "A",
+      "B",
+      "B",
+      "C"
+    ],
+    "correct_alternations": 0,
+    "incorrect_alternations": 1,
+    "neutral_triads": 1
+  }
+}

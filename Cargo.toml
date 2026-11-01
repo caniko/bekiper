@@ -1,0 +1,143 @@
+[workspace]
+resolver = "2"
+# Wildcard members so crane can build individual crates as separate derivations
+# without triggering rebuilds of unrelated packages.
+members = ["rust/*"]
+exclude = ["rust/bekiper-annotate-wasm"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+authors = ["Can H. Tartanoglu <canhtart@gmail.com>"]
+
+[workspace.metadata.crane]
+name = "bekiper-workspace"
+
+[workspace.dependencies]
+# Workspace crates
+bekiper-core = { path = "rust/bekiper-core" }
+themekit = { path = "rust/themekit" }
+bekiper-math = { path = "rust/bekiper-math" }
+bekiper-perimeter = { path = "rust/bekiper-perimeter" }
+bekiper-pose = { path = "rust/bekiper-pose", default-features = false }
+bekiper-feature = { path = "rust/bekiper-feature" }
+bekiper-behaviour = { path = "rust/bekiper-behaviour" }
+bekiper-detect = { path = "rust/bekiper-detect" }
+bekiper-annotation = { path = "rust/bekiper-annotation" }
+bekiper-annotate-protocol = { path = "rust/bekiper-annotate-protocol" }
+bekiper-annotate-model = { path = "rust/bekiper-annotate-model" }
+# Shared renderer-neutral viewport and polygon editing (tartan-ui).
+tartan-ui-annotate = { git = "https://github.com/caniko/tartan-ui.git", rev = "e7139fa4b560de8ba57c83baca593fe4146f6bd7" }
+bekiper-annotate-client = { path = "rust/bekiper-annotate-client" }
+bekiper-annotate-webtransport = { path = "rust/bekiper-annotate-webtransport" }
+bekiper-annotate = { path = "rust/bekiper-annotate" }
+bekiper-annotate-pg = { path = "rust/bekiper-annotate-pg" }
+bekiper-ingress = { path = "rust/bekiper-ingress", default-features = false }
+bekiper-post-analysis = { path = "rust/bekiper-post-analysis" }
+
+# Data processing
+polars = { version = "0.53", features = [
+  "lazy",
+  "csv",
+  "parquet",
+  "ipc",
+  "dtype-struct",
+  "is_in",
+  "new_streaming",
+  "round_series",
+  "abs",
+  "concat_str",
+  "rolling_window",
+  "interpolate",
+  "trigonometry",
+  "rle",
+] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = { version = "0.9", features = ["preserve_order"] }
+roxmltree = "0.20"
+
+# Ordered map (preserves insertion order) — used by the aggregate row
+# extractors so column order is stable across rows.
+indexmap = { version = "2", features = ["serde"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# CLI
+clap = { version = "4", features = ["derive", "env"] }
+
+# Async & parallelism
+tokio = { version = "1", features = ["full"] }
+rayon = "1"
+
+# Image processing
+# dioxus-native 0.7.9/blitz-dom 0.2.4 requires this exact image release.
+# Keep the workspace pin explicit so Web and Native resolve one graph.
+image = { version = "=0.25.6", default-features = false, features = [
+  "png",
+  "jpeg",
+  "webp",
+] }
+imageproc = "0.25"
+ndarray = "0.17"
+
+# Video frame extraction
+ffmpeg-next = { version = "8", default-features = false, features = [
+  "codec",
+  "format",
+  "software-scaling",
+] }
+
+# ONNX Runtime (CPU + GPU via ROCm/CUDA execution providers)
+ort = { git = "https://github.com/pykeio/ort.git", default-features = false, features = [
+  "load-dynamic",
+  "ndarray",
+] }
+
+# Logging
+tracing = "0.1"
+tracing-appender = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Progress
+indicatif = "0.18"
+
+# CSV parsing (for annotation plugin files)
+csv = "1"
+
+# HDF5 (for DeepLabCut .h5 pose files written by pandas/pytables)
+hdf5-metno = "0.10"
+
+# OpenDocument spreadsheet export
+zip = "7.2"
+
+# PyO3 bindings (used by the bekiper-inspect-py extension)
+pyo3 = { version = "0.26", features = [
+  "extension-module",
+  "abi3-py312",
+  "multiple-pymethods",
+] }
+
+# ============================================================================
+# Build profiles
+# ============================================================================
+
+[profile.dev]
+opt-level = 0
+debug = 1
+
+[profile.dev.package."*"]
+opt-level = 1
+
+[profile.dev.build-override]
+opt-level = 0
+debug = 0
+
+[profile.release]
+codegen-units = 1
+lto = "thin"

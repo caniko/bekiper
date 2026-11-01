@@ -1,0 +1,70 @@
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
+
+# Override torch's metadata to strip vendor-specific GPU deps from its base
+# requirements. GPU packages are re-introduced as opt-in dependency groups
+# (nvidia / rocm) below. torch, torchvision and triton are provided by nix
+# on ROCm systems (system-site-packages); use --no-install-package at sync time.
+#
+# When bumping torch, update `version` below and diff requires-dist against PyPI.
+[[tool.uv.dependency-metadata]]
+name = "torch"
+version = "2.11.0"
+requires-dist = [
+  "filelock",
+  "fsspec",
+  "jinja2",
+  "networkx",
+  "setuptools",
+  "sympy",
+  "typing-extensions",
+]
+
+[dependency-groups]
+dev = ["mypy>=1.14", "opencv-stubs", "pandas>=2.2"]
+nvidia = [
+  "cuda-bindings",
+  "cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]",
+  "nvidia-cudnn-cu13",
+  "nvidia-cusparselt-cu13",
+  "nvidia-nccl-cu13",
+  "nvidia-nvshmem-cu13",
+  "triton",
+]
+rocm = [
+  # pytorch-triton-rocm is provided by nix (not on PyPI); no pip-installable
+  # packages needed for ROCm beyond what nix system-site-packages provides.
+]
+
+[tool.uv.workspace]
+members = [
+  "python/bekiper-inspect",
+  "python/bekiper-auto-detect",
+  "python/bekiper-cli",
+  "rust/bekiper-inspect-py",
+]
+
+[tool.uv.sources]
+bekiper-rs = { workspace = true }
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+exclude = ["\\.venv/", "examples/", ".*/tests/", "rust/"]
+files = [
+  "python/bekiper-inspect",
+  "python/bekiper-auto-detect",
+  "python/bekiper-cli",
+]
+
+[[tool.mypy.overrides]]
+module = ["pandas.*", "seaborn.*", "scipy.*"]
+ignore_missing_imports = true

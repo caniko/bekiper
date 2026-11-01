@@ -1,0 +1,262 @@
+# Approved next-run settings; input registration is incomplete.
+# Supply qualified metadata, recording-specific NORT
+# roles/physical sides and source-rule evidence before selecting plan_path.
+# A is the primary literal WT/KO reference; B and C are authorized sensitivities.
+run_mode = "production"
+plan_version = "neo_imen_recipe_2026_10_12_nort_amendment_2026_10_13"
+
+[execution]
+ymaze_primary_thresholds = [0, 25, 45, 65]
+primary_workers = 1
+
+[inputs]
+# metadata_path must bind the qualified canonical session table by SHA-256.
+
+[inputs.factor_levels]
+five_xfad = ["WT", "AD"]
+hcar1 = ["KO", "WT", "Het"]
+treatment = ["vehicle", "lactate"]
+
+[inputs.group_mapping]
+G1 = { five_xfad = "AD", hcar1 = "KO", treatment = "lactate" }
+G2 = { five_xfad = "AD", hcar1 = "KO", treatment = "vehicle" }
+G3 = { five_xfad = "WT", hcar1 = "KO", treatment = "lactate" }
+G4 = { five_xfad = "WT", hcar1 = "KO", treatment = "vehicle" }
+G5 = { five_xfad = "AD", hcar1 = "WT", treatment = "lactate" }
+G6 = { five_xfad = "AD", hcar1 = "WT", treatment = "vehicle" }
+G7 = { five_xfad = "WT", hcar1 = "WT", treatment = "lactate" }
+G8 = { five_xfad = "WT", hcar1 = "WT", treatment = "vehicle" }
+
+[inputs.session_key_mapping.five_xfad]
+wt = "WT"
+tg = "AD"
+
+[inputs.session_key_mapping.group]
+"1" = "G1"
+"2" = "G2"
+"3" = "G3"
+"4" = "G4"
+"5" = "G5"
+"6" = "G6"
+"7" = "G7"
+"8" = "G8"
+
+[inputs.units_and_calibration.oft]
+time = "s"
+distance = "m"
+speed = "m/s"
+
+[inputs.units_and_calibration.ymaze]
+time = "s"
+distance = "m"
+speed = "m/s"
+
+[inputs.units_and_calibration.nort]
+time = "s"
+distance = "m"
+speed = "m/s"
+
+[assays.oft]
+input_level = "native_session_metrics"
+
+[assays.ymaze]
+input_level = "native_session_metrics"
+triad_policy = "source_table"
+fewer_than_three_entries_policy = "zero_windows"
+requested_sensitivity_thresholds_arm_length_pct = [0, 25, 45, 65]
+# Owner decision 2026-10-28: arm-start cross-line geometry, ≤1 s arm-sequence
+# gap bridging as registered policy, and dwell only for the 0% context.
+threshold_geometry = "imen_arm_start_crossline_v1"
+principal_entry_rule = "dual_landmark_false_to_true_v1"
+zone_max_gap_seconds = 1.0
+
+# Contexts without their own entry use this zero-dwell policy (25/45/65%).
+[assays.ymaze.temporal_policy]
+min_duration_seconds = 0.0
+duration_comparison = "at_least"
+max_gap_seconds = 0.0
+
+[assays.ymaze.threshold_policies."0"]
+min_duration_seconds = 1.0
+duration_comparison = "at_least"
+max_gap_seconds = 1.0
+
+[assays.nort]
+input_level = "native_session_metrics"
+zero_training_total_policy = "undefined_biases"
+
+[assays.nort.bout_policy]
+# Researcher amendment 2026-10-13: merge before filtering; endpoints inclusive.
+# Owner decision 2026-10-28: merged bouts ≥0.25 s (was 0.5 s).
+min_bout_seconds = 0.25
+# Owner decision 2026-10-28: whisker-fan hits count like nose contact.
+whisker_enabled = true
+max_gap_seconds = 1.0
+max_nose_speed = 0.05
+max_angle_deg = 45.0
+speed_filter_mode = "disabled"
+strict_boundaries = false
+
+[assays.nort.exploration_quality_flag]
+phase = "test"
+quantity = "total_test_exploration"
+operator = ">="
+threshold_s = 15.0
+
+[assays.nort.lr_pseudocount]
+enabled = false
+
+[inclusion]
+existing_metadata_exclusions_policy = "honor_metadata"
+qc_flag_exclusion_policy = "flags_only"
+missing_metric_policy = "endpoint_complete_cases"
+unmatched_prepost_policy = "report_and_withhold_pair"
+upstream_verification_requirement = "require_verified"
+
+[statistics]
+oft_baseline_strategy = "baseline_adjusted"
+ymaze_post_only_formula = "post_SA ~ 5XFAD_status * HCAR1_status * treatment"
+factor_coding = "treatment"
+covariance_estimator = "classical"
+test_tails = "two-sided"
+confidence_interval_method = "student_t"
+confidence_level = 0.95
+summary_uncertainty = "95% CI"
+nort_additional_covariates = []
+nort_within_group_checks = ["DI", "percent_novel"]
+nort_within_group_test_method = "one_sample_t"
+spearman_missing_and_constant_input_policy = "pairwise_complete_constant_missing"
+model_failure_policy = "report_without_simplification"
+
+[statistics.hcar1_policy_plan]
+primary = "A"
+policies = ["A", "B", "C"]
+
+[statistics.model_family_by_endpoint]
+"oft.total_distance_m" = "gaussian_ols"
+"oft.mean_speed_m_per_s" = "gaussian_ols"
+"oft.center_time_s" = "gaussian_ols"
+"oft.center_time_pct" = "gaussian_ols"
+"oft.center_entries" = "gaussian_ols"
+"oft.latency_to_first_center_entry_s" = "gaussian_ols"
+"ymaze.spontaneous_alternation_pct" = "gaussian_ols"
+"nort.DI" = "gaussian_ols"
+
+[statistics.contrast_roles]
+ad_level = "AD"
+hcar1_wt = "WT"
+hcar1_ko = "KO"
+lactate = "lactate"
+vehicle = "vehicle"
+
+[statistics.contrast_estimand_and_weighting]
+weighting = "fixed_reference"
+reference_values = { pre_outcome = "mean" }
+
+[statistics.multiplicity]
+method = "holm"
+families = { planned_contrasts = "recipe_primary_planned_contrasts", nort_within_group = "recipe_nort_preference_checks", genotype_simple_effects = "recipe_supplementary_genotype_simple_effects" }
+
+# Exploratory strata retain the complete model and explicit failed attempts.
+# These four age/onset combinations occur in Updated_Mice-overview. A stratum
+# conditioned on treatment cannot estimate the factorial treatment contrast.
+[statistics.subgroup_analysis_plan]
+strata = [
+  { field = "sex", levels = ["female", "male"], assays = ["oft", "ymaze", "nort"] },
+  { field = "age_treatment_window", levels = ["old/late", "mid/late", "mid/early", "young/early"], assays = ["oft", "ymaze", "nort"] },
+]
+outputs = ["models", "correlations", "within_group_tests"]
+multiplicity = { method = "holm", family = "recipe_exploratory_subgroups" }
+
+[outputs]
+requested_outputs = ["metrics", "models", "correlations", "within_group_tests", "subgroup_inference", "spatial_location_bias", "figures", "report_pdf"]
+figure_formats = ["png", "pdf", "svg"]
+figure_dpi = 300
+# Omitted figure_selection retains main, sensitivity, distribution, diagnostic
+# and subgroup panels, including explicitly unavailable attempts.
+
+[outputs.report]
+enabled = true
+compiler = "latexmk"
+title = "Neo/Imen recipe: independent primary contexts"
+
+[decision_resolutions.D01]
+origin = "researcher_decision"
+rationale = "The explicit 27-triplet source table governs classification."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#recorded-decisions--2026-10-12"
+scope = ["assays.ymaze"]
+value = { "assays.ymaze.triad_policy" = "source_table" }
+
+[decision_resolutions.D02]
+origin = "researcher_decision"
+rationale = "Fewer than three entries has zero windows and undefined percentages."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#recorded-decisions--2026-10-12"
+scope = ["assays.ymaze"]
+value = { "assays.ymaze.fewer_than_three_entries_policy" = "zero_windows" }
+
+# Each independent primary context supplies its own explicit D03.
+[decision_resolutions.D06]
+origin = "researcher_decision"
+rationale = "The inclusive test-exploration quality flag does not exclude recordings."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#recorded-decisions--2026-10-12"
+scope = ["assays.nort"]
+value = { "assays.nort.exploration_quality_flag" = { phase = "test", quantity = "total_test_exploration", operator = ">=", threshold_s = 15.0 } }
+
+[decision_resolutions.D09]
+origin = "researcher_decision"
+rationale = "Register the approved full-factorial baseline-adjusted OFT/Y-maze and post-treatment NORT plan, 95% CIs, Holm families and exploratory sex/age/treatment-window strata before execution."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#statistical-plan-approval--2026-10-12"
+scope = ["statistics"]
+
+[decision_resolutions.D09.value]
+"statistics.oft_baseline_strategy" = "baseline_adjusted"
+"statistics.ymaze_post_only_formula" = "post_SA ~ 5XFAD_status * HCAR1_status * treatment"
+"statistics.factor_coding" = "treatment"
+"statistics.covariance_estimator" = "classical"
+"statistics.test_tails" = "two-sided"
+"statistics.confidence_interval_method" = "student_t"
+"statistics.confidence_level" = 0.95
+"statistics.summary_uncertainty" = "95% CI"
+"statistics.nort_additional_covariates" = []
+"statistics.nort_within_group_checks" = ["DI", "percent_novel"]
+"statistics.nort_within_group_test_method" = "one_sample_t"
+"statistics.spearman_missing_and_constant_input_policy" = "pairwise_complete_constant_missing"
+"statistics.model_failure_policy" = "report_without_simplification"
+"statistics.contrast_roles" = { ad_level = "AD", hcar1_wt = "WT", hcar1_ko = "KO", lactate = "lactate", vehicle = "vehicle" }
+"statistics.contrast_estimand_and_weighting" = { weighting = "fixed_reference", reference_values = { pre_outcome = "mean" } }
+"statistics.multiplicity" = { method = "holm", families = { planned_contrasts = "recipe_primary_planned_contrasts", nort_within_group = "recipe_nort_preference_checks", genotype_simple_effects = "recipe_supplementary_genotype_simple_effects" } }
+"statistics.model_family_by_endpoint" = { "oft.total_distance_m" = "gaussian_ols", "oft.mean_speed_m_per_s" = "gaussian_ols", "oft.center_time_s" = "gaussian_ols", "oft.center_time_pct" = "gaussian_ols", "oft.center_entries" = "gaussian_ols", "oft.latency_to_first_center_entry_s" = "gaussian_ols", "ymaze.spontaneous_alternation_pct" = "gaussian_ols", "nort.DI" = "gaussian_ols" }
+"statistics.subgroup_analysis_plan" = { strata = [{ field = "sex", levels = ["female", "male"], assays = ["oft", "ymaze", "nort"] }, { field = "age_treatment_window", levels = ["old/late", "mid/late", "mid/early", "young/early"], assays = ["oft", "ymaze", "nort"] }], outputs = ["models", "correlations", "within_group_tests"], multiplicity = { method = "holm", family = "recipe_exploratory_subgroups" } }
+
+[decision_resolutions.D10]
+origin = "researcher_decision"
+rationale = "A uses recorded WT/KO as primary; B retains separate recorded Het; C assumes assigned-group factors, WT+Het pooling and animal 37's assigned KO. Preserve source annotations and endpoint/policy eligibility. These assumptions do not verify genotype or biological equivalence."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#hcar1-policy-approval--2026-10-12"
+scope = ["inputs", "statistics.hcar1_policy_plan"]
+
+[decision_resolutions.D10.value]
+"statistics.hcar1_policy_plan" = { primary = "A", policies = ["A", "B", "C"] }
+"inputs.factor_levels" = { five_xfad = ["WT", "AD"], hcar1 = ["KO", "WT", "Het"], treatment = ["vehicle", "lactate"] }
+"inputs.group_mapping" = { G1 = { five_xfad = "AD", hcar1 = "KO", treatment = "lactate" }, G2 = { five_xfad = "AD", hcar1 = "KO", treatment = "vehicle" }, G3 = { five_xfad = "WT", hcar1 = "KO", treatment = "lactate" }, G4 = { five_xfad = "WT", hcar1 = "KO", treatment = "vehicle" }, G5 = { five_xfad = "AD", hcar1 = "WT", treatment = "lactate" }, G6 = { five_xfad = "AD", hcar1 = "WT", treatment = "vehicle" }, G7 = { five_xfad = "WT", hcar1 = "WT", treatment = "lactate" }, G8 = { five_xfad = "WT", hcar1 = "WT", treatment = "vehicle" } }
+# Recording-specific NORT object roles/physical sides remain to be registered.
+
+[decision_resolutions.D12]
+origin = "researcher_decision"
+rationale = "Retain corpus recordings and QC flags; model endpoint-complete verified observations with explicit exclusion/pairing ledgers and exploratory subgroup accounting."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#statistical-plan-approval--2026-10-12"
+scope = ["inclusion", "statistics.subgroup_analysis_plan"]
+
+[decision_resolutions.D12.value]
+"inclusion.existing_metadata_exclusions_policy" = "honor_metadata"
+"inclusion.qc_flag_exclusion_policy" = "flags_only"
+"inclusion.missing_metric_policy" = "endpoint_complete_cases"
+"inclusion.unmatched_prepost_policy" = "report_and_withhold_pair"
+"inclusion.upstream_verification_requirement" = "require_verified"
+"statistics.subgroup_analysis_plan" = { strata = [{ field = "sex", levels = ["female", "male"], assays = ["oft", "ymaze", "nort"] }, { field = "age_treatment_window", levels = ["old/late", "mid/late", "mid/early", "young/early"], assays = ["oft", "ymaze", "nort"] }], outputs = ["models", "correlations", "within_group_tests"], multiplicity = { method = "holm", family = "recipe_exploratory_subgroups" } }
+
+[decision_resolutions.D13]
+origin = "researcher_decision"
+rationale = "Zero training total has undefined biases; no LR pseudocount is authorized."
+approval_or_plan_reference = "behavioral_analysis_requirements.md#recorded-decisions--2026-10-12"
+scope = ["assays.nort"]
+value = { "assays.nort.zero_training_total_policy" = "undefined_biases", "assays.nort.lr_pseudocount" = { enabled = false } }

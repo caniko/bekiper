@@ -1,0 +1,41 @@
+# Fallback for task types without a descriptor. Resolution titles it with the
+# recorded task type, so an unknown experiment is never silently "other".
+id = "generic"
+key = "generic"
+task_type = ""
+display_name = "Other experiment"
+short_name = "Other"
+archetype = "generic"
+order = 1000
+
+[[sections]]
+id = "other"
+title = "Other recordings"
+order = 1000
+
+[[steps]]
+id = "recording"
+label = "Recording"
+section = "other"
+order = 1000
+
+[[blocks]]
+id = "context_card"
+
+[[blocks]]
+id = "endpoint_table"
+requires = ["metrics"]
+
+[[blocks]]
+id = "figure_gallery"
+
+[[blocks]]
+id = "animal_step_grid"
+
+[[blocks]]
+id = "video_embed"
+requires = ["video"]
+
+[[blocks]]
+id = "qc_flags"
+requires = ["metrics"]

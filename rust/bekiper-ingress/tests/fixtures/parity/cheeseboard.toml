@@ -1,0 +1,40 @@
+# Legacy source:
+# /data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/animal/Chrys/day-cheeseboard/results/standard/2.0cm/cheeseboard.xlsx
+source_workbook = "/data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/animal/Chrys/day-cheeseboard/results/standard/2.0cm/cheeseboard.xlsx"
+source_sheet = "cheeseboard_reward_trace"
+source_row = "413_9_2"
+expected_sheet = "cheeseboard_reward_trace"
+
+experiment = "413_seq2_cheeseboard"
+fps = 15.0
+meters_per_pixel = 0.001
+task_type = "cheeseboard"
+
+[aggregate.recipe_to_sheet]
+cheeseboard = "cheeseboard_reward_trace"
+
+[animal_metadata]
+animal = 413
+
+[detailed]
+excluded = false
+enclosure_label = "board"
+reward_labels = ["reward"]
+start_area_exit_frame = 0
+start_area_exit_seconds = 0.0
+reward_arrival_frame = 194
+reward_arrival_seconds = 12.93333333333333
+seconds_to_find_reward = 12.93333333333333
+seconds_in_reward_area = 3.4
+reward_entries = 1
+start_to_reward_displacement_meters = 2.593631673206243
+total_distance_meters = 3.468203676345944
+total_mean_speed_mps = 0.1012434617653228
+total_duration_seconds = 20.8
+
+[expected_cells]
+reward_area_seconds = 3.4
+reward_trace_seconds = 12.93333333333333
+start_to_reward_displacement_meters = 2.593631673206243
+total_distance_meters = 3.468203676345944
+total_duration_seconds = 20.8

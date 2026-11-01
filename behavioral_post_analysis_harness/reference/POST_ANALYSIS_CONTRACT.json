@@ -1,0 +1,466 @@
+{
+  "contract_version": "1.0.0",
+  "purpose": "Structured source extraction for implementation; not a substitute for the faithful Markdown reference.",
+  "source_document": {
+    "filename": "behavioral_analysis_recipe_OFT_Ymaze_NORT(1).docx",
+    "sha256": "902b572ad21f61718047d00bec853abf17c9471307f70517d0ef8339bdb6e654",
+    "pages": 3,
+    "reference": "BEHAVIORAL_RECIPE.md",
+    "underlying_thesis_criteria_and_literature_available": false
+  },
+  "authority": {
+    "scientific_source": "BEHAVIORAL_RECIPE.md",
+    "ambiguities": "DECISION_REGISTER.md",
+    "engineering_additions_are_not_source_rules": true,
+    "formula_strings_are_descriptive_not_executable_code": true
+  },
+  "general": {
+    "source_ref": "SRC-GEN",
+    "metadata_row": "one row per animal per test/session",
+    "metadata_fields_verbatim": [
+      "animal_id",
+      "sex",
+      "age/treatment window",
+      "5XFAD status",
+      "HCAR1 status",
+      "treatment",
+      "group",
+      "timepoint",
+      "excluded",
+      "exclusion_reason"
+    ],
+    "experimental_factors": [
+      "5XFAD_status",
+      "HCAR1_status",
+      "treatment"
+    ],
+    "timepoint": "Keep pre/post when available",
+    "main_contrast": {
+      "scope": "5XFAD background",
+      "question": "Whether the lactate effect differs between HCAR1-WT and HCAR1-KO mice",
+      "formula": "(G5 - G6) - (G1 - G2)",
+      "group_roles": {
+        "G5": "AD-HCAR1-WT lactate",
+        "G6": "AD-HCAR1-WT vehicle",
+        "G1": "AD-HCAR1-KO lactate",
+        "G2": "AD-HCAR1-KO vehicle"
+      },
+      "weights": {
+        "G5": 1,
+        "G6": -1,
+        "G1": -1,
+        "G2": 1
+      },
+      "complete_group_mapping_supplied": false
+    },
+    "reporting": [
+      "individual animals in all graphs",
+      "n",
+      "mean +/- SEM or 95% CI",
+      "exact P values",
+      "planned contrasts"
+    ]
+  },
+  "oft": {
+    "source_ref": "SRC-OFT",
+    "purpose": "Locomotor activity and anxiety-like centre avoidance",
+    "recording_s": 300,
+    "time_origin": "first valid animal detection",
+    "arena_cm": [
+      40,
+      40,
+      34
+    ],
+    "periphery_border_cm": 8,
+    "center_cm": [
+      24,
+      24
+    ],
+    "valid_zone_entry": {
+      "landmark": "body centroid",
+      "criterion": "enters a zone and remains there",
+      "minimum_dwell_s": 1.0,
+      "dwell_operator": ">="
+    },
+    "primary_outputs": [
+      "total_distance_m",
+      "mean_speed_m_per_s",
+      "center_time_s",
+      "center_time_pct",
+      "center_entries",
+      "latency_to_first_center_entry_s"
+    ],
+    "explicit_formulas": {
+      "center_time_pct": "center_time_s / 300 * 100"
+    },
+    "secondary_outputs": [
+      "periphery_time_pct",
+      "freezing_s",
+      "grooming_s",
+      "rearing_s",
+      "immobility_s",
+      "fecal_boli_count"
+    ],
+    "explicit_optional_measure": "fecal_boli_count if available",
+    "interpretation": "Low center time, fewer center entries and longer latency indicate stronger centre avoidance; interpret together with distance/speed.",
+    "models": {
+      "post_only": "outcome ~ 5XFAD_status * HCAR1_status * treatment",
+      "baseline_adjusted": "post_outcome ~ pre_outcome + 5XFAD_status * HCAR1_status * treatment",
+      "alternative": "mixed model with animal_id as random effect",
+      "mixed_model_exact_formula": null
+    },
+    "main_panels": [
+      "total distance",
+      "mean speed",
+      "center time %",
+      "center entries",
+      "latency to center"
+    ],
+    "decision_ids": [
+      "D04",
+      "D05",
+      "D09",
+      "D10",
+      "D11",
+      "D12"
+    ]
+  },
+  "ymaze": {
+    "registered_amendment": {
+      "decision_id": "YM-2026-10-04",
+      "reference": "YMAZE_AMENDMENT.json",
+      "scope_thresholds_pct": [25, 45, 65],
+      "threshold_geometry": "imen_radial_vertex_span_v1",
+      "principal_entry_rule": "dual_landmark_false_to_true_v1",
+      "minimum_dwell_s": 0,
+      "historical_source_minimum_dwell_s": 1.0,
+      "historical_source_geometry_wording": "percentage of arm length from maze centre",
+      "authority": "explicit researcher decision supersedes generic source dwell for principal analyses"
+    },
+    "source_ref": "SRC-YM",
+    "purpose": "Spatial working-memory readout using spontaneous alternation from overlapping triplets of valid arm entries",
+    "recording_s": 360,
+    "recording_duration_qualifier": "approximately",
+    "time_origin": "first valid detection",
+    "threshold_options_arm_length_pct": [
+      25,
+      45,
+      65
+    ],
+    "primary_threshold_arm_length_pct": null,
+    "threshold_selection_rule": "One predefined threshold per dataset; prefer selected thesis threshold, others as sensitivity analyses.",
+    "valid_arm_entry": {
+      "required_landmarks": [
+        "head centre",
+        "tail base"
+      ],
+      "landmark_combination": "both cross selected threshold into an arm",
+      "minimum_dwell_s": 0,
+      "dwell_operator": "none_for_principal_25_45_65",
+      "event": "false_to_true_same_arm_dual_landmark_predicate",
+      "timestamp": "second_required_landmark_crossing"
+    },
+    "scoring_sequence": "valid_arm_entry_sequence",
+    "preserve_raw_entries": true,
+    "triads": {
+      "window": "overlapping sliding window of three entries",
+      "status": "Source table and prose conflict; no silent resolution.",
+      "correct": {
+        "definition_verbatim": "Three different arms in a sliding window of three entries",
+        "listed_triplets": [
+          "ABC",
+          "ACB",
+          "BAC",
+          "BCA",
+          "CAB",
+          "CBA"
+        ]
+      },
+      "incorrect": {
+        "definition_verbatim": "Current arm repeats one of the two previously visited different arms",
+        "listed_triplets": [
+          "AAB",
+          "AAC",
+          "ABA",
+          "ACA",
+          "BAB",
+          "BBA",
+          "BBC",
+          "BCB",
+          "CAC",
+          "CBC",
+          "CCA",
+          "CCB"
+        ]
+      },
+      "neutral": {
+        "definition_verbatim": "First two entries are the same, so alternation cannot be evaluated",
+        "listed_triplets": [
+          "AAA",
+          "ABB",
+          "ACC",
+          "BAA",
+          "BBB",
+          "BCC",
+          "CAA",
+          "CBB",
+          "CCC"
+        ]
+      },
+      "production_interpretation": null,
+      "source_table_fixtures_require_explicit_policy": true
+    },
+    "formulas": {
+      "total_triads": "valid_total_arm_entries - 2",
+      "usable_triads": "correct_alternations + incorrect_alternations",
+      "spontaneous_alternation_pct": "correct_alternations / usable_triads * 100",
+      "spontaneous_alternation_pct_standard": "correct_alternations / total_triads * 100",
+      "neutral_triads_pct": "neutral_triads / total_triads * 100",
+      "DeltaSA": "post_SA - pre_SA"
+    },
+    "primary_score": "spontaneous_alternation_pct",
+    "sensitivity_score": "spontaneous_alternation_pct_standard",
+    "source_missing_rules": [
+      {
+        "when": "usable_triads = 0",
+        "outputs": [
+          "spontaneous_alternation_pct"
+        ],
+        "result": "NA"
+      },
+      {
+        "when": "total_triads = 0",
+        "outputs": [
+          "spontaneous_alternation_pct_standard",
+          "neutral_triads_pct"
+        ],
+        "result": "NA"
+      }
+    ],
+    "fewer_than_two_entries_defined_by_source": false,
+    "qc_outputs_verbatim": [
+      "valid_total_arm_entries",
+      "raw_total_arm_entries",
+      "removed_short_entries",
+      "neutral_triads_pct",
+      "usable_triads",
+      "arm_preference",
+      "distance",
+      "mean speed",
+      "freezing"
+    ],
+    "low_quality_flag": {
+      "expression": "valid_total_arm_entries < 8 OR usable_triads < 5",
+      "automatic_exclusion_specified": false
+    },
+    "primary_endpoint": "post-treatment SA",
+    "models": {
+      "baseline_adjusted": "post_SA ~ pre_SA + 5XFAD_status * HCAR1_status * treatment",
+      "post_only_explicit_formula": null
+    },
+    "secondary_analysis": "DeltaSA for visualization and secondary analysis",
+    "qc_correlations": {
+      "method": "Spearman",
+      "left": "SA",
+      "right": [
+        "valid_total_arm_entries",
+        "total_distance_m",
+        "mean_speed_m_per_s",
+        "neutral_triads_pct"
+      ]
+    },
+    "main_panels": [
+      "post-treatment SA",
+      "DeltaSA",
+      "paired pre/post SA",
+      "valid arm entries",
+      "distance/speed",
+      "neutral triads %"
+    ],
+    "supplementary": [
+      "25/45/65 threshold sensitivity",
+      "primary SA vs standard SA"
+    ],
+    "decision_ids": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D11",
+      "D12"
+    ]
+  },
+  "nort": {
+    "source_ref": "SRC-NORT",
+    "aliases": [
+      "NORT",
+      "NOR"
+    ],
+    "purpose": "Recognition-memory readout; report raw exploration times with DI/RI.",
+    "protocol": {
+      "habituation": "empty arena",
+      "familiarization_duration_s": 360,
+      "familiarization_objects": "two identical objects",
+      "delay_h": 5,
+      "test_duration_s": 360,
+      "test_objects": [
+        "one familiar",
+        "one novel"
+      ],
+      "counterbalance": "object positions/configurations",
+      "time_origin_specified": false
+    },
+    "exploration_rules": {
+      "object_geometry": "object mask/convex hull",
+      "interaction_zone_distance_cm": 3,
+      "candidate": {
+        "body_centroid": "outside object mask",
+        "nose_distance_to_perimeter_cm": {
+          "operator": "<=",
+          "value": 3
+        },
+        "direction": "head oriented toward object or nose contact"
+      },
+      "head_angle": {
+        "aggregation": "bout-level median",
+        "operator": "<=",
+        "degrees": 45,
+        "brief_frame_level_failures": "do not remove good bouts"
+      },
+      "merge": {
+        "gap_operator": "<",
+        "gap_s": 0.5,
+        "order": "before duration filter"
+      },
+      "valid_bout": {
+        "duration_s": {
+          "operator": ">=",
+          "value": 1.0
+        },
+        "nose_speed_m_per_s": {
+          "aggregation": "bout-level median",
+          "operator": "<",
+          "value": 0.05
+        }
+      },
+      "exclusions": "Do not count climbing/sitting on the object, grooming, or rearing unless clearly object-directed."
+    },
+    "training_inputs": {
+      "TA": "exploration time Object A",
+      "TB": "exploration time Object B"
+    },
+    "training_formulas": {
+      "total_training_exploration": "TA + TB",
+      "object_bias": "(TA - TB) / (TA + TB)",
+      "side_bias": "(TB - TA) / (TA + TB)"
+    },
+    "test_inputs": {
+      "TN": "novel object exploration time",
+      "TF": "familiar object exploration time"
+    },
+    "test_formulas": {
+      "total_test_exploration": "TN + TF",
+      "DI": "(TN - TF) / (TN + TF)",
+      "RI": "TN / (TN + TF)",
+      "percent_novel": "100 * RI",
+      "LR": "ln(TN / TF)"
+    },
+    "source_missing_rules": [
+      {
+        "when": "TN + TF = 0",
+        "outputs": [
+          "DI",
+          "RI",
+          "percent_novel"
+        ],
+        "result": "NA"
+      },
+      {
+        "when": "TN = 0 OR TF = 0",
+        "outputs": [
+          "LR"
+        ],
+        "result": "NA unless a predefined pseudocount is used"
+      }
+    ],
+    "quality_flag": {
+      "name": "passes_15s_exploration_threshold",
+      "threshold_name_implies_s": 15,
+      "phase": null,
+      "quantity": null,
+      "operator": null,
+      "automatic_exclusion_specified": false
+    },
+    "primary_endpoint": "DI",
+    "model": "DI ~ 5XFAD_status * HCAR1_status * treatment",
+    "optional_covariates_only_if_predefined": [
+      "sex",
+      "age/treatment_window",
+      "total_test_exploration",
+      "object_configuration"
+    ],
+    "within_group_checks": {
+      "choices": [
+        "DI vs 0",
+        "percent_novel vs 50"
+      ],
+      "combination": "and/or",
+      "multiple_comparison_correction_required": true,
+      "test_method": null,
+      "correction_method": null
+    },
+    "main_panels": [
+      "training Object A vs Object B exploration",
+      "test familiar vs novel exploration",
+      "DI by group with dashed line at 0",
+      "percent novel by group with dashed line at 50%",
+      "total test exploration"
+    ],
+    "qc_supplementary": [
+      "object bias",
+      "side/location bias",
+      "DI vs total exploration",
+      "number of valid bouts",
+      "bouts removed by duration/speed/angle filters"
+    ],
+    "interpretation_cautions": [
+      "exploration level",
+      "object salience",
+      "neophobia",
+      "location bias"
+    ],
+    "decision_ids": [
+      "D06",
+      "D07",
+      "D08",
+      "D09",
+      "D10",
+      "D11",
+      "D12",
+      "D13",
+      "D14"
+    ]
+  },
+  "final_figures": {
+    "source_ref": "SRC-FIG",
+    "figure_1": "OFT locomotion/anxiety-like behaviour",
+    "figure_2": "Y-maze spontaneous alternation plus locomotor/QC outputs",
+    "figure_3": "NORT recognition memory plus exploration QC",
+    "supplementary": [
+      "threshold sensitivity",
+      "sex/age/treatment-window subgroup analyses",
+      "debug/QC outputs"
+    ]
+  },
+  "engineering_requirements_not_source_claims": {
+    "decisions_are_explicit_and_versioned": true,
+    "quality_flags_do_not_automatically_exclude": true,
+    "missing_values_have_reasons": true,
+    "synthetic_fixture_decisions_are_not_production_defaults": true,
+    "preserve_source_and_computed_provenance": true,
+    "metric_and_model_blocking_is_dependency_scoped": true,
+    "reference_bundle_validation_is_not_pipeline_validation": true
+  }
+}

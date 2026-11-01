@@ -1,0 +1,14 @@
+{
+  "arm_membership_hysteresis": true,
+  "arm_sequence": [
+    "A"
+  ],
+  "pose_gap_fill_seconds": 0.2,
+  "raw_arm_sequence": [
+    "A",
+    "A",
+    "A",
+    "A"
+  ],
+  "zone_max_gap_seconds": 0.1
+}

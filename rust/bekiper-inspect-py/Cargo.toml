@@ -1,0 +1,20 @@
+[package]
+name = "bekiper-inspect-py"
+description = "PyO3 bindings exposing bekiper-core inspection types to Python"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "_bekiper_rs"
+crate-type = ["cdylib", "rlib"]
+test = false
+
+[dependencies]
+bekiper-core.workspace = true
+pyo3.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+themekit = { workspace = true, features = ["python"] }
+toml.workspace = true

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use bekiper, please cite the version you used."
+type: software
+title: bekiper
+abstract: >-
+  Behavioural kinematics analysis for rodent experiments. Scores open field,
+  novel object recognition and Y-maze trials from markerless pose estimates,
+  with registered cohort post-analysis.
+authors:
+  - family-names: Tartanoglu
+    given-names: Can H.
+    email: canhtart@gmail.com
+version: 0.1.0
+date-released: "2026-11-01"
+license: AGPL-3.0-only
+repository-code: "https://github.com/caniko/bekiper"
+keywords:
+  - behavioural neuroscience
+  - pose estimation
+  - novel object recognition
+  - Y-maze
+  - open field

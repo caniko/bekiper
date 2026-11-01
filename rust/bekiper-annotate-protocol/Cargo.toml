@@ -1,0 +1,11 @@
+[package]
+name = "bekiper-annotate-protocol"
+description = "Shared wire framing primitives for the bekiper annotation transports"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bincode = { version = "2", features = ["serde"] }
+serde.workspace = true

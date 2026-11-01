@@ -1,0 +1,38 @@
+[project]
+name = "bekiper-cli"
+version = "0.1.0"
+license = { text = "AGPL-3.0-only" }
+description = "Unified CLI for Bekiper Python tools"
+authors = [{ name = "Can H. Tartanoglu", email = "canhtart@gmail.com" }]
+requires-python = ">=3.12"
+
+dependencies = [
+  "matplotlib>=3.8",
+  "typer>=0.9",
+  "tomli-w",
+  "bekiper-auto-detect",
+  "bekiper-inspect",
+]
+
+[project.scripts]
+bekiper = "bekiper_cli.main:app"
+bekiper-detect = "bekiper_cli.detect:app"
+bekiper-inspect = "bekiper_cli.inspect:app"
+bekiper-post-analysis-render = "bekiper_cli.post_analysis.render_bundle:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "scipy>=1.17.1"]
+
+[tool.uv.sources]
+bekiper-auto-detect = { workspace = true }
+bekiper-inspect = { workspace = true }
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

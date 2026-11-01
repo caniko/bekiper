@@ -1,0 +1,190 @@
+# Legacy source:
+# /data/nvme0/can/Projects/bekiper/examples/animal/Dejana/OUL_R1-4/result/oul.xlsx
+source_workbook = "/data/nvme0/can/Projects/bekiper/examples/animal/Dejana/OUL_R1-4/result/oul.xlsx"
+source_sheet = "Training"
+source_row = "116_0"
+expected_sheet = "Training"
+
+experiment = "116_seq0_oultraining"
+fps = 30.0
+meters_per_pixel = 0.001
+task_type = "object_recognition"
+
+[aggregate.recipe_to_sheet]
+oultraining = "Training"
+
+[animal_metadata]
+animal = 116
+cohort = "3"
+gene = "APPPS1"
+sex = "m"
+age = "6"
+
+[detailed]
+protocol = "oul_training"
+excluded = false
+total_duration_seconds = 907.638541
+total_distance_meters = 39.49546918031725
+total_mean_speed = 0.04948833403864622
+freezing_seconds = 12.68888888888889
+analysis_window_seconds = 120.0
+object_labels = ["arena", "object_1", "object_2"]
+exploration_times = [0.0, 1.311111111111111, 0.0]
+bout_counts = [0, 3, 0]
+
+[detailed.observation_totals]
+object_labels = ["object_1", "object_2"]
+observation_seconds = [1.311111111111111, 0.0]
+observation_bouts = [3, 0]
+total_seconds = 1.311111111111111
+total_bouts = 3
+
+[[detailed.pairwise_observations]]
+lhs_label = "object_1"
+rhs_label = "object_2"
+absolute_delta_seconds = 1.311111111111111
+
+[[detailed.qualia_rollups]]
+label = "object_1"
+body_center_ear_seconds = 20.24444444444444
+body_tail_base_seconds = 0.0
+body_total_seconds = 20.24444444444444
+olfaction_nose_seconds = 0.0
+olfaction_ray_seconds = 0.0
+olfaction_total_seconds = 0.0
+whisker_left_proximity_seconds = 21.37777777777778
+whisker_left_fov_seconds = 187.6
+whisker_right_proximity_seconds = 18.26666666666667
+whisker_right_fov_seconds = 131.8222222222222
+whisker_total_seconds = 1.311111111111111
+
+[[detailed.qualia_rollups]]
+label = "object_2"
+body_center_ear_seconds = 13.88888888888889
+body_tail_base_seconds = 0.0
+body_total_seconds = 13.88888888888889
+olfaction_nose_seconds = 0.0
+olfaction_ray_seconds = 0.0
+olfaction_total_seconds = 0.0
+whisker_left_proximity_seconds = 13.2
+whisker_left_fov_seconds = 149.2222222222222
+whisker_right_proximity_seconds = 15.06666666666667
+whisker_right_fov_seconds = 164.2222222222222
+whisker_total_seconds = 0.0
+
+[detailed.zone_metrics.all_motion_summary]
+zone_name = "all"
+total_displacement_meters = 39.49546918031725
+median_speed_mps = 0.04948833403864622
+median_acceleration_mps2 = 0.02708972409176291
+freezing_seconds = 12.68888888888889
+
+[detailed.zone_metrics.center_summary]
+zone_name = "in_center"
+entries = 51
+duration_seconds = 131.2
+distance_meters = 5.074062465447867
+mean_speed = 0.03867425507201118
+latency_seconds = 0.0
+
+[detailed.zone_metrics.periphery_summary]
+zone_name = "in_periphery"
+entries = 52
+duration_seconds = 468.7333333333333
+distance_meters = 29.92476439210004
+mean_speed = 0.0638383823230671
+latency_seconds = 0.0
+
+[detailed.zone_metrics.center_motion_summary]
+zone_name = "in_center"
+total_displacement_meters = 5.074062465447867
+median_speed_mps = 0.0357133425969533
+median_acceleration_mps2 = 0.02599435255179986
+freezing_seconds = 2.066666666666666
+
+[detailed.zone_metrics.periphery_motion_summary]
+zone_name = "in_periphery"
+total_displacement_meters = 29.92476439210004
+median_speed_mps = 0.0496024728194876
+median_acceleration_mps2 = 0.03166747105819581
+freezing_seconds = 8.444444444444445
+
+[[detailed.zone_metrics.quadrant_summaries]]
+zone_name = "q_0_0"
+entries = 39
+duration_seconds = 228.8888888888889
+distance_meters = 11.50660227774691
+mean_speed = 0.05027019223896819
+latency_seconds = 0.0
+
+[[detailed.zone_metrics.quadrant_summaries]]
+zone_name = "q_0_1"
+entries = 28
+duration_seconds = 107.8222222222222
+distance_meters = 6.668757718547733
+mean_speed = 0.06185058489418475
+latency_seconds = 0.0
+
+[[detailed.zone_metrics.quadrant_summaries]]
+zone_name = "q_1_0"
+entries = 32
+duration_seconds = 165.3333333333333
+distance_meters = 6.605019278588991
+mean_speed = 0.03995172910477212
+latency_seconds = 0.0
+
+[[detailed.zone_metrics.quadrant_summaries]]
+zone_name = "q_1_1"
+entries = 22
+duration_seconds = 97.88888888888889
+distance_meters = 3.881424628713506
+mean_speed = 0.03965187605033006
+latency_seconds = 0.0
+
+[[detailed.zone_metrics.quadrant_motion_summaries]]
+zone_name = "q_0_0"
+total_displacement_meters = 11.50660227774691
+median_speed_mps = 0.03781977286800475
+median_acceleration_mps2 = 0.02597079832109833
+freezing_seconds = 3.111111111111111
+
+[[detailed.zone_metrics.quadrant_motion_summaries]]
+zone_name = "q_0_1"
+total_displacement_meters = 6.668757718547733
+median_speed_mps = 0.07239731785185766
+median_acceleration_mps2 = 0.04302536541005581
+freezing_seconds = 1.044444444444445
+
+[[detailed.zone_metrics.quadrant_motion_summaries]]
+zone_name = "q_1_0"
+total_displacement_meters = 6.605019278588991
+median_speed_mps = 0.03600617547804668
+median_acceleration_mps2 = 0.02713722177770794
+freezing_seconds = 6.422222222222222
+
+[[detailed.zone_metrics.quadrant_motion_summaries]]
+zone_name = "q_1_1"
+total_displacement_meters = 3.881424628713506
+median_speed_mps = 0.04219142222731042
+median_acceleration_mps2 = 0.01753308297569331
+freezing_seconds = 2.111111111111111
+
+[expected_cells]
+protocol = "oul_training"
+total_observation_s = 1.311111111111111
+total_observation_bouts = 3
+object_1_exploration_s = 1.311111111111111
+object_2_exploration_s = 0.0
+pair_object_1_object_2_delta_s = 1.311111111111111
+pair_object_2_object_1_delta_s = 1.311111111111111
+center_duration_s = 131.2
+periphery_duration_s = 468.7333333333333
+quadrant_1_1_duration_s = 228.8888888888889
+all_motion_distance_m = 39.49546918031725
+all_motion_median_speed = 0.04948833403864622
+all_motion_median_acceleration = 0.02708972409176291
+all_motion_freezing_s = 12.68888888888889
+object_1_body_total_s = 20.24444444444444
+object_1_whisker_total_s = 1.311111111111111
+object_2_body_total_s = 13.88888888888889
+object_2_whisker_total_s = 0.0

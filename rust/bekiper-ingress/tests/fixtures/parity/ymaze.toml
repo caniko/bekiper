@@ -1,0 +1,126 @@
+# Legacy source:
+# /data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/phase/Imen/y-maze/result/y_maze.xlsx
+source_workbook = "/data/nvme0/can/Projects/bekiper-temp/ingress-workflow_examples/phase/Imen/y-maze/result/y_maze.xlsx"
+source_sheet = "Single"
+source_row = "A2_30"
+expected_sheet = "Single"
+
+experiment = "A2_seq30_ymaze"
+fps = 15.0
+meters_per_pixel = 0.001
+task_type = "y_maze"
+
+[aggregate.recipe_to_sheet]
+ymaze = "Single"
+
+[animal_metadata]
+animal = "A2"
+
+[detailed]
+excluded = false
+proximal_threshold = 0.65
+start_mode = "first_detection"
+zone_max_gap_seconds = 0.1
+arm_membership_hysteresis = true
+total_duration_seconds = 300.0
+analysis_duration_seconds = 288.4705254022298
+seconds_in_arms = 250.7510514720609
+seconds_in_arms_and_center = 288.4705254022298
+
+[[detailed.zone_summaries]]
+zone_name = "in_arm_A"
+entries = 7
+duration_seconds = 68.56265438280259
+latency_seconds = 1.0
+
+[[detailed.zone_summaries]]
+zone_name = "in_arm_B"
+entries = 6
+duration_seconds = 50.47065892249149
+latency_seconds = 2.0
+
+[[detailed.zone_summaries]]
+zone_name = "in_arm_C"
+entries = 9
+duration_seconds = 131.7177381667668
+latency_seconds = 3.0
+
+[[detailed.zone_summaries]]
+zone_name = "in_center"
+entries = 0
+duration_seconds = 37.7194739301689
+
+[[detailed.area_motion_summaries]]
+zone_name = "in_arm_A"
+total_displacement_meters = 3.218922791585591
+median_speed_mps = 0.03694931023111292
+
+[[detailed.area_motion_summaries]]
+zone_name = "in_center"
+total_displacement_meters = 1.569195909089967
+median_speed_mps = 0.03292651658216961
+
+[detailed.analysis]
+arm_sequence = ["A", "B", "C", "A"]
+raw_arm_sequence = [
+  "A",
+  "A",
+  "A",
+  "A",
+  "A",
+  "A",
+  "A",
+  "B",
+  "B",
+  "B",
+  "B",
+  "B",
+  "B",
+  "C",
+  "C",
+  "C",
+  "C",
+  "C",
+  "C",
+  "C",
+  "C",
+  "C",
+]
+first_arm_entered = "A"
+last_arm_entered = "A"
+sum_of_permutation_distribution = 8
+
+[detailed.analysis.permutation_distribution]
+abc = 1
+bca = 2
+
+[expected_cells]
+# The aggregate now emits two parallel sets of arm-entry counts:
+#   raw_* — no-dwell threshold crossings from raw_arm_sequence
+#   valid_* — counts from the SA-scoring arm_sequence
+proximal_threshold = 0.65
+start_mode = "first_detection"
+zone_max_gap_seconds = 0.1
+arm_membership_hysteresis = true
+total_duration_s = 300.0
+analysis_duration_s = 288.4705254022298
+raw_total_arm_entries = 22
+raw_arm_A_entries = 7
+arm_A_latency_s = 1.0
+raw_arm_B_entries = 6
+arm_B_latency_s = 2.0
+raw_arm_C_entries = 9
+arm_C_latency_s = 3.0
+valid_arm_A_entries = 2
+valid_arm_B_entries = 1
+valid_arm_C_entries = 1
+valid_total_arm_entries = 4
+first_arm_entered = "A"
+last_arm_entered = "A"
+total_triads = 2
+permutation_sum = 8
+perm_ABC = 1
+perm_BCA = 2
+seconds_in_arms = 250.7510514720609
+seconds_in_arms_and_center = 288.4705254022298
+center_motion_distance_m = 1.569195909089967

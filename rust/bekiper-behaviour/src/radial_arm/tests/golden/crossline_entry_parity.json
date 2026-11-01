@@ -1,0 +1,29 @@
+{
+  "fixture_kind": "synthetic_rule_parity_not_scientific_approval",
+  "geometry_version": "imen_arm_start_crossline_v1",
+  "center": [[-0.1, -0.1], [0.1, -0.1], [0.1, 0.1], [-0.1, 0.1]],
+  "arms": {
+    "A": [[0.1, -0.1], [0.1, 0.1], [1.0, 0.3], [1.1, -0.3]],
+    "B": [[0.1, 0.1], [-0.1, 0.1], [-0.3, 1.1], [0.3, 1.0]],
+    "C": [[-0.1, 0.1], [-0.1, -0.1], [-1.1, -0.3], [-1.0, 0.3]]
+  },
+  "sample_columns": ["timestamp_s", "head_center_x", "head_center_y", "tail_base_x", "tail_base_y"],
+  "cases": [
+    {
+      "name": "non_parallel_arms_cross_line_sensitivity_missing_pose_and_reentry",
+      "thresholds": [0, 25, 45, 65],
+      "samples": [
+        [0, 0, 0, 0, 0], [0.03, 0.4, 0, 0.4, 0], [0.06, 0.6, 0, 0.6, 0],
+        [0.09, 0.9, 0, 0.9, 0], [0.12, 0.9, 0, 0.2, 0], [0.15, 0.9, 0, 0.9, 0],
+        [0.18, 0, 0, 0, 0], [0.21, 0, 0.4, 0, 0.4], [0.24, 0, 0.9, 0, 0.9],
+        [0.27, null, 0.9, 0, 0.9], [0.30, 0, 0.9, 0, 0.9], [0.33, -0.5, 0, -0.5, 0]
+      ],
+      "expected": {
+        "0": {"sequence": ["A", "B", "B", "C"], "entry_frames": {"A": [1], "B": [7, 10], "C": [11]}},
+        "25": {"sequence": ["A", "A", "B", "B", "C"], "entry_frames": {"A": [1, 5], "B": [7, 10], "C": [11]}},
+        "45": {"sequence": ["A", "A", "B", "B"], "entry_frames": {"A": [2, 5], "B": [8, 10], "C": []}},
+        "65": {"sequence": ["A", "A", "B", "B"], "entry_frames": {"A": [3, 5], "B": [8, 10], "C": []}}
+      }
+    }
+  ]
+}

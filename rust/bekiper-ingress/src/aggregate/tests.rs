@@ -1,0 +1,9 @@
+include!("tests/parse.rs");
+include!("tests/oft_extract_populates_all_static_columns.rs");
+include!("tests/ymaze_extract_populates_all_static_columns.rs");
+include!("tests/ymaze_invariants.rs");
+include!("tests/cheeseboard_extract_uses_typed_columns.rs");
+include!("tests/aggregate_multi_recipe_split.rs");
+include!("tests/nort_exploration_diagnostics.rs");
+include!("tests/ymaze_null_denominators.rs");
+include!("tests/edge_cases.rs");

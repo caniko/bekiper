@@ -1,0 +1,100 @@
+# Y-maze spontaneous alternation (also radial arm mazes). Each recording is
+# scored under several arm-entry threshold contexts (the `__<variant>` suffix of
+# the analysis ID, or of `analysis_role`); the principal one carries the step.
+id = "y_maze"
+key = "ymaze"
+task_type = "y_maze"
+aliases = ["ymaze", "radial_arm"]
+display_name = "Y-maze spontaneous alternation"
+short_name = "Y-maze"
+archetype = "choice_sequence"
+order = 30
+figures = ["ymaze_threshold_concordance"]
+
+[[sections]]
+id = "ymaze"
+title = "Y-maze"
+order = 10
+
+[[steps]]
+id = "ymaze"
+label = "Y-maze"
+section = "ymaze"
+order = 40
+
+# Label, rank and comparison each come from the first matching rule that sets
+# them. `{n}` matches digits, a trailing `*` any suffix. Unmatched variants keep
+# their name with rank 1; contexts sort by (rank, name with `{n}` zero-padded).
+[contexts]
+principal = ["arm45", "proximal45"]
+principal_cohort = "arm45"
+rules = [
+  { pattern = "compare_0pct_dwell0s", label = "0% (no dwell)", rank = 0, comparison = true },
+  { pattern = "compare_*", rank = 0, comparison = true },
+  { pattern = "arm0_dwell1s", label = "0% (1 s dwell)", rank = 0 },
+  { pattern = "arm0*", rank = 0 },
+  { pattern = "arm{n}", label = "{n}%" },
+  { pattern = "proximal{n}", label = "{n}%" },
+]
+
+[features]
+panels = ["ymaze_arm_sections", "arm_sequence"]
+previews = [
+  { kind = "ymaze_arm_sections", title = "Arm sections and cross-lines" },
+]
+
+[post_analysis]
+assay = "ymaze"
+
+[[endpoints]]
+name = "spontaneous_alternation_pct"
+label = "SA%"
+family = "score"
+model = "gaussian_ols"
+criteria = true
+figures = ["pre_post_trajectories"]
+detail = "analysis.spontaneous_alternation_pct"
+
+[[endpoints]]
+name = "spontaneous_alternation_pct_standard"
+family = "score"
+criteria = true
+
+[[endpoints]]
+name = "neutral_triads_pct"
+family = "score"
+criteria = true
+
+[[blocks]]
+id = "context_card"
+
+[[blocks]]
+id = "protocol_timeline"
+
+[[blocks]]
+id = "endpoint_table"
+requires = ["metrics"]
+
+[[blocks]]
+id = "threshold_comparison"
+requires = ["contexts"]
+
+[[blocks]]
+id = "figure_gallery"
+
+[[blocks]]
+id = "animal_step_grid"
+
+[[blocks]]
+id = "video_embed"
+requires = ["video"]
+
+[[blocks]]
+id = "qc_flags"
+requires = ["metrics"]
+
+[prose]
+threshold = "arm-entry threshold"
+contexts_note = "One figure per arm-entry threshold context (25/45/65 %). The 0 % comparison (no dwell) appears in each context for reference."
+assay_page = "Y-maze shows each arm-entry threshold context (25/45/65 %)"
+composite = "Y-maze composites carry all four scoring variants (0 % comparison, 25/45/65 %) of the same recording; rows that are identical across variants are drawn once."

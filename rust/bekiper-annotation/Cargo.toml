@@ -1,0 +1,16 @@
+[package]
+name = "bekiper-annotation"
+description = "Manual annotation parsers for bekiper (CSV bboxes, COCO JSON, radial-maze)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+bekiper-core.workspace = true
+bekiper-math.workspace = true
+csv.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+tracing.workspace = true
