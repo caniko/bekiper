@@ -12,6 +12,7 @@ Every file is byte-identical to the source revision except:
 
 | File | Change |
 |---|---|
+| `simit.toml`, `.github/workflows/nix-builds.yaml` | Added: Simit-generated hosted-runner Nix builds of the public packages |
 | `LICENSE`, `README.md`, `COMMERCIAL.md`, `CONTRIBUTING.md`, `CITATION.cff`, `.zenodo.json`, `PROVENANCE.md` | Added for the public release |
 | `Cargo.toml`, `**/pyproject.toml` | `license` field set to `AGPL-3.0-only` |
 | `deny.toml` | `AGPL-3.0-only` added to the allowed licenses |
